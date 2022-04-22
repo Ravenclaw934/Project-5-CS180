@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * A program makes creates a page GUI.
@@ -34,7 +33,10 @@ public class StudentGUI extends JComponent implements Runnable {
     JButton viewReplyButton; // a button to view replies to a discussion
     JButton writeReplyButton; // a button to write a reply
     JButton deleteButton;
+    JButton userUpdate;
+    JButton passUpdate;
     JComboBox<String> courseDropdown;
+    JComboBox<String> discDropdown;
 
     StudentGUI page; // variable of the type StudentGUI
 
@@ -43,62 +45,144 @@ public class StudentGUI extends JComponent implements Runnable {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == discussionButton) {
-                page.clear();
+
             }
             if (e.getSource() == courseButton) {
-                courseDropdown.getItemAt(courseDropdown.getSelectedIndex());
+                Course selectedCourse = null;
+                String selectCourseName = courseDropdown.getItemAt(courseDropdown.getSelectedIndex());
+                for (int i = 0; i < courseList.size(); i++) {
+                    if (selectCourseName.equals(courseList.get(i).getCourseName())) {
+                        selectedCourse = courseList.get(i);
+                    }
+                }
+                page.displayCourse(selectedCourse, frame.getContentPane());
+
             }
             if (e.getSource() == accountButton) {
-                page.displayAccount();
+                page.displayAccount(frame.getContentPane());
             }
             if (e.getSource() == deleteButton) {
-                
+                int delete;
+                delete = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete your account?",
+                        "Update Account", JOptionPane.YES_NO_OPTION);
+                if (delete == JOptionPane.YES_OPTION) {
+                    student = null;
+                    JOptionPane.showMessageDialog(null, "Account Deleted", "Update Account", JOptionPane.PLAIN_MESSAGE);
+                    try {
+                        frame.dispose();
+                    } catch (NullPointerException nul) {
+
+                    }
+                }
+            }
+            if (e.getSource() == userUpdate) {
+                String newUser;
+                do {
+                    newUser = JOptionPane.showInputDialog(null, "What is your new username?",
+                            "Update Account", JOptionPane.QUESTION_MESSAGE);
+                    if ((newUser == null) || (newUser.isEmpty())) {
+                        JOptionPane.showMessageDialog(null, "Username cannot be empty!", "Update Account",
+                                JOptionPane.ERROR_MESSAGE);
+                    } //end if
+
+                } while ((newUser == null) || (newUser.isEmpty()));
+                try {
+                    student.setUsername(newUser);
+                } catch (AccountExistsException ex) {
+                    ex.printStackTrace();
+                }
+                page.displayAccount(frame.getContentPane());
+            }
+            if (e.getSource() == passUpdate) {
+                String newUser;
+                do {
+                    newUser = JOptionPane.showInputDialog(null, "What is your new password?",
+                            "Update Account", JOptionPane.QUESTION_MESSAGE);
+                    if ((newUser == null) || (newUser.isEmpty())) {
+                        JOptionPane.showMessageDialog(null, "Password cannot be empty!", "Update Account",
+                                JOptionPane.ERROR_MESSAGE);
+                    } //end if
+                } while ((newUser == null) || (newUser.isEmpty()));
+                try {
+                    student.setPassword(newUser);
+                } catch (PasswordLimiterException ex) {
+                    ex.printStackTrace();
+                }
             }
         }
     };
 
-    public void displayAccount() {
+    public void displayAccount(Container content) {
 
         JPanel accountInfo = new JPanel();
         accountInfo.setLayout(new BoxLayout(accountInfo, BoxLayout.Y_AXIS));
 
         JLabel userDisp = new JLabel("Username: " + student.getUsername());
-        JButton userUpdate = new JButton("Update Username");
+        userUpdate = new JButton("Update Username");
         userUpdate.addActionListener(actionListener);
         JLabel passDisp = new JLabel("Password: " + student.getPassword());
-        JButton passUpdate = new JButton("Update Password");
+        passUpdate = new JButton("Update Password");
         JLabel gradeDisp = new JLabel("Grade: " + student.getGrade());
         passUpdate.addActionListener(actionListener);
-        JButton deleteButton = new JButton("Delete Account");
+        deleteButton = new JButton("Delete Account");
         deleteButton.addActionListener(actionListener);
-
-        accountInfo.add(userDisp);
-        accountInfo.add(userUpdate);
-        accountInfo.add(passDisp);
-        accountInfo.add(passUpdate);
-        accountInfo.add(deleteButton);
-        frame.revalidate();
-        frame.add(accountInfo,CENTER_ALIGNMENT);
+        try {
+            accountInfo.add(userDisp);
+            accountInfo.add(userUpdate);
+            accountInfo.add(passDisp);
+            accountInfo.add(passUpdate);
+            accountInfo.add(deleteButton);
+            content.add(BorderLayout.CENTER, accountInfo);
+            content.revalidate(); // invokes layout manager
+            content.repaint();
+        } catch (NullPointerException e) {
+            System.out.println("Null");
+        }
     }
 
-    /* set up page colors */
-    public void clear() {
-        /* set canvas to white with default page color */
-        graphics2D.setPaint(Color.white);
-        graphics2D.fillRect(0, 0, getSize().width, getSize().height);
-        currentBack = Color.white;
-        graphics2D.setPaint(Color.black);
-        repaint();
+    public void displayCourse(Course course, Container content) {
+        JPanel discChoice = new JPanel();
+        discChoice.setLayout(new BoxLayout(discChoice, BoxLayout.Y_AXIS));
+
+        ArrayList<Discussion> forum = course.getForum();
+        String[] discNames = new String[forum.size()];
+
+        try {
+            for (int i = 0; i < forum.size(); i++) {
+                discNames[i] = (forum.get(i).getMessage());
+            }
+        } catch (Exception e) {
+
+        }
+        discDropdown = new JComboBox<>(discNames);
+        viewReplyButton = new JButton("See Replies");
+        viewReplyButton.addActionListener(actionListener);
+
+        try {
+            discChoice.add(discDropdown);
+            discChoice.add(viewReplyButton);
+            content.add(BorderLayout.CENTER, discChoice);
+            content.revalidate(); // invokes layout manager
+            content.repaint();
+        } catch (NullPointerException e) {
+            System.out.println("Null");
+        }
+        
     }
 
 
-    public void erase() {
+        public void erase() {
         graphics2D.setPaint(currentBack);
     }
 
     public StudentGUI(Student student, ArrayList<Course> courseList) {
         this.student = student;
         this.courseList = courseList;
+        courseNames = new String[courseList.size()];
+        for (int i = 0; i < courseList.size(); i++) {
+            courseNames[i] = courseList.get(i).getCourseName();
+        }
+        this.courseNames= courseNames;
     }
 
     public StudentGUI() {
