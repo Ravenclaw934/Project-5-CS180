@@ -26,7 +26,6 @@ public class StudentGUI extends JComponent implements Runnable {
     public ArrayList<Course> courseList;
     public JFrame frame;
 
-
     JButton discussionButton; // a button to view discussions
     JButton courseButton; // a button to veiw courses
     JButton accountButton; // a button to edit/view account
@@ -67,12 +66,11 @@ public class StudentGUI extends JComponent implements Runnable {
                         "Update Account", JOptionPane.YES_NO_OPTION);
                 if (delete == JOptionPane.YES_OPTION) {
                     student = null;
-                    JOptionPane.showMessageDialog(null, "Account Deleted", "Update Account", JOptionPane.PLAIN_MESSAGE);
-                    try {
-                        frame.dispose();
-                    } catch (NullPointerException nul) {
-
-                    }
+                    JOptionPane.showMessageDialog(null, "Account Deleted, Please Exit the Program", "Update Account", JOptionPane.PLAIN_MESSAGE);
+                    //page.frame.dispose();
+                    page.frame.setVisible(false);
+                    Thread t1 = new Thread(new LoginGUI());
+                    t1.start();
                 }
             }
             if (e.getSource() == userUpdate) {
@@ -88,10 +86,13 @@ public class StudentGUI extends JComponent implements Runnable {
                 } while ((newUser == null) || (newUser.isEmpty()));
                 try {
                     student.setUsername(newUser);
+                    page.displayAccount(frame.getContentPane());
+
                 } catch (AccountExistsException ex) {
                     ex.printStackTrace();
+                } catch (NullPointerException nu) {
+                    System.out.println("Null");
                 }
-                page.displayAccount(frame.getContentPane());
             }
             if (e.getSource() == passUpdate) {
                 String newUser;
@@ -167,10 +168,18 @@ public class StudentGUI extends JComponent implements Runnable {
         } catch (NullPointerException e) {
             System.out.println("Null");
         }
-        
+
     }
 
+    public void closePage(Container conten) {
 
+        try {
+            //System.exit(0);
+            frame.dispose();
+        } catch (NullPointerException nul) {
+            System.out.println("Null on close");
+        }
+    }
         public void erase() {
         graphics2D.setPaint(currentBack);
     }
@@ -228,7 +237,7 @@ public class StudentGUI extends JComponent implements Runnable {
 
         frame.setSize(600, 400);
         frame.setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
     }
 }
