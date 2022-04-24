@@ -23,8 +23,18 @@ public class StudentGUI extends JComponent implements Runnable {
     public String username;
     public String password;
     public Student student = new Student("bdgillis", "brunch");
-    public ArrayList<Course> courseList;
-    public JFrame frame;
+    public ArrayList<Course> courseList = new ArrayList<>();
+    Course C1 = new Course("CS", new Teacher("bgil","buns"));
+    public static JFrame frame;
+    public ArrayList<Student> students;
+    public ArrayList<Teacher> teachers;
+    public JTextField userText;
+    public JTextField passText;
+    public JButton enterButton;
+    public JLabel userPrompt;
+    public JLabel passPrompt;
+    ArrayList<Course> courses;
+
 
     JButton discussionButton; // a button to view discussions
     JButton courseButton; // a button to veiw courses
@@ -86,7 +96,9 @@ public class StudentGUI extends JComponent implements Runnable {
                 } while ((newUser == null) || (newUser.isEmpty()));
                 try {
                     student.setUsername(newUser);
-                    page.displayAccount(frame.getContentPane());
+                    JOptionPane.showMessageDialog(null, "Account Updated", "Update Account", JOptionPane.PLAIN_MESSAGE);
+                    Thread t1 = new Thread(new StudentGUI(student, courseList));
+                    t1.start();
 
                 } catch (AccountExistsException ex) {
                     ex.printStackTrace();
@@ -110,8 +122,61 @@ public class StudentGUI extends JComponent implements Runnable {
                     ex.printStackTrace();
                 }
             }
+            if (e.getSource() == enterButton) {
+                page.checkLogin();
+            }
         }
     };
+
+    public void checkLogin() {
+        boolean usernameExists = false;
+        boolean login = false;
+
+        for (Student student : students) {
+            if (userText.getText().equals(student.getUsername())) {
+                usernameExists = true;
+                if (passText.getText().equals(student.getPassword())) {
+                    login = true;
+                    mainPageDisplay();
+                }
+            }
+        }
+
+        if (!usernameExists) {
+            JOptionPane.showMessageDialog(null, "Username is Incorrect", "Login Error",
+                    JOptionPane.ERROR_MESSAGE);
+        } else if (!login) {
+            JOptionPane.showMessageDialog(null, "Password is Incorrect", "Login Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+
+    }
+
+    public void mainPageDisplay() {
+        /* set up JFrame */
+        frame = new JFrame("Student Dashboard");
+        Container content = frame.getContentPane();
+        content.setLayout(new BorderLayout());
+        page = new StudentGUI();
+        content.add(page, BorderLayout.CENTER);
+        currentBack = Color.white;
+
+        JPanel jpaneltop = new JPanel();
+
+        courseButton = new JButton("See Course");
+        courseDropdown = new JComboBox<>(courseNames);
+        courseButton.addActionListener(actionListener);
+
+        accountButton = new JButton("Account");
+        accountButton.addActionListener(actionListener);
+        viewReplyButton = new JButton("Erase");
+
+        jpaneltop.add(courseDropdown);
+        jpaneltop.add(courseButton);
+        jpaneltop.add(accountButton);
+
+        content.add(jpaneltop, BorderLayout.NORTH);
+    }
 
     public void displayAccount(Container content) {
 
@@ -191,7 +256,7 @@ public class StudentGUI extends JComponent implements Runnable {
         for (int i = 0; i < courseList.size(); i++) {
             courseNames[i] = courseList.get(i).getCourseName();
         }
-        this.courseNames= courseNames;
+        this.courseNames = courseNames;
     }
 
     public StudentGUI() {
@@ -211,29 +276,42 @@ public class StudentGUI extends JComponent implements Runnable {
     }
 
     public void run() {
+
         /* set up JFrame */
-        frame = new JFrame("Student Dashboard");
+        JFrame frame = new JFrame("Login");
         Container content = frame.getContentPane();
         content.setLayout(new BorderLayout());
         page = new StudentGUI();
-        content.add(page, BorderLayout.CENTER);
-        currentBack = Color.white;
 
-        JPanel jpaneltop = new JPanel();
+        JPanel jpanelInput = new JPanel();
+        JPanel jpanelPrompts = new JPanel();
 
-        courseButton = new JButton("See Course");
-        courseDropdown = new JComboBox<>(courseNames);
-        courseButton.addActionListener(actionListener);
+        jpanelInput.setLayout(new BoxLayout(jpanelInput, BoxLayout.Y_AXIS));
+        jpanelPrompts.setLayout(new BoxLayout(jpanelPrompts, BoxLayout.Y_AXIS));
 
-        accountButton = new JButton("Account");
-        accountButton.addActionListener(actionListener);
-        viewReplyButton = new JButton("Erase");
 
-        jpaneltop.add(courseDropdown);
-        jpaneltop.add(courseButton);
-        jpaneltop.add(accountButton);
+        userText = new JFormattedTextField();
+        userPrompt = new JLabel("Username: ");
+        passText = new JTextField("", 5);
+        passPrompt = new JLabel("Password: ");
+        enterButton = new JButton("Login");
+        enterButton.addActionListener(actionListener);
 
-        content.add(jpaneltop, BorderLayout.NORTH);
+        //passPrompt.setLabelFor(password);
+        //userPrompt.setLabelFor(userText);
+
+        //frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
+
+        jpanelInput.add(userPrompt);
+        jpanelInput.add(userText);
+        jpanelInput.add(passPrompt);
+        jpanelInput.add(passText);
+        jpanelInput.add(enterButton);
+
+        //content.add(jpanelPrompts, BorderLayout.WEST);
+        content.add(jpanelInput, BorderLayout.CENTER);
+
+        //content.add(jpanelInput, BorderLayout.NORTH);
 
         frame.setSize(600, 400);
         frame.setLocationRelativeTo(null);
