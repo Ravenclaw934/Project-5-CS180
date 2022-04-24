@@ -13,11 +13,19 @@ public class LoginGUI extends JComponent implements Runnable {
     public JButton enterButton;
     public JLabel userPrompt;
     public JLabel passPrompt;
+
     LoginGUI login;
+    public JFrame frame;
+
     ArrayList<Course> courses;
 
     public LoginGUI() {
 
+    }
+
+    public LoginGUI(ArrayList<Student> students, ArrayList<Teacher> teachers) {
+        this.students = students;
+        this.teachers = teachers;
     }
 
     public LoginGUI(ArrayList<Student> students, ArrayList<Teacher> teachers, ArrayList<Course> courses) {
@@ -37,13 +45,17 @@ public class LoginGUI extends JComponent implements Runnable {
             boolean login = false;
             String username;
             String password;
+
             if (e.getSource() == enterButton) {
                 for (Student student : students) {
                     if (userText.getText().equals(student.getUsername())) {
                         usernameExists = true;
                         if (passText.getText().equals(student.getPassword())) {
                             login = true;
-                            StudentGUI studentPage = new StudentGUI(student, courses);
+                            StudentGUI studentPage = new StudentGUI(students, teachers);
+                            Thread t = new Thread(studentPage);
+                            t.start();
+                            frame.dispose();
                         }
                     }
                 }
@@ -71,7 +83,7 @@ public class LoginGUI extends JComponent implements Runnable {
 
     public void run() {
         /* set up JFrame */
-        JFrame frame = new JFrame("Login");
+        frame = new JFrame("Login");
         Container content = frame.getContentPane();
         content.setLayout(new BorderLayout());
         login = new LoginGUI();
@@ -109,7 +121,7 @@ public class LoginGUI extends JComponent implements Runnable {
 
         frame.setSize(600, 400);
         frame.setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);  //needed
         frame.setVisible(true);
 
     }
