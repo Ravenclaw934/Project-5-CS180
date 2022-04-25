@@ -21,7 +21,7 @@ public class Client {
 
             writer.close();
             ois.close();
-            Thread t = new Thread(new LoginGUI(students, teachers));
+            Thread t = new Thread(new LoginGUI(students, teachers, courses));
             t.start();
 
         } catch (Exception e) {
