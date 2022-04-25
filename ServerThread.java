@@ -586,7 +586,7 @@ public class ServerThread implements Runnable {
         }
     }
 
-    public void gradeStudent(String user, int grade) {
+    public void gradeStudent(String user, String grade) {
         ArrayList<String> lines = new ArrayList<>();
         synchronized (STUDENT_GATE) {
             try {
@@ -663,18 +663,88 @@ public class ServerThread implements Runnable {
                 File f = new File(COURSE_FILE);
                 FileOutputStream fos = new FileOutputStream(f, false);
                 PrintWriter pw = new PrintWriter(fos);
-                for (int i = 0; i <= discussionLocation; i++) {
-                    pw.println(lines.get(i));
-                }
-                pw.println(user + "," + reply + "," + "0");
-                for (int i = discussionLocation + 1; i < lines.size(); i++) {
-                    pw.println(lines.get(i));
+                for (String s : lines) {
+                    pw.println(s);
                 }
 
                 pw.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public void deleteReply(String course, String teacher, String discussion, String user, String reply) {
+        ArrayList<String> lines = new ArrayList<>();
+        synchronized (COURSE_GATE) {
+            try {
+                File f = new File(COURSE_FILE);
+                FileReader fr = new FileReader(f);
+                BufferedReader bfr = new BufferedReader(fr);
+
+                while (true) {
+                    String s = bfr.readLine();
+                    if (s == null) {
+                        break;
+                    }
+                    lines.add(s);
+                }
+                bfr.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            int discussionLocation = lines.indexOf(course + "," + teacher + "," + discussion);
+            for (int i = discussionLocation + 1; i < lines.size(); i++) {
+                String temp = lines.get(i).substring(lines.get(i).indexOf(",") + 1);
+                if (lines.get(i).substring(0, lines.get(i).indexOf(",")).equals(user)) {
+                    if (temp.substring(0, temp.indexOf(",")).equals(reply)) {
+                        lines.remove(i);
+                        break;
+                    }
+                }
+            }
+
+            try {
+                File f = new File(COURSE_FILE);
+                FileOutputStream fos = new FileOutputStream(f, false);
+                PrintWriter pw = new PrintWriter(fos);
+                for (String s : lines) {
+                    pw.println(s);
+                }
+
+                pw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    //both Arraylists for importing should come from scanning all the lines of the file
+    //into an Arraylist
+
+    public void importDiscussion(ArrayList<String> lines) {
+        synchronized (COURSE_GATE) {
+            try {
+                File f = new File(COURSE_FILE);
+                FileOutputStream fos = new FileOutputStream(f, true);
+                PrintWriter pw = new PrintWriter(fos);
+                for (String s : lines) {
+                    pw.println(s);
+                }
+
+                pw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void importReply(ArrayList<String> lines, String course, String teacher, String discussion) {
+        for (String s : lines) {
+            String user = s.substring(0, s.indexOf(","));
+            String reply = s.substring(s.indexOf(",") + 1);
+            addReply(course, teacher, discussion, user, reply);
         }
     }
 }
