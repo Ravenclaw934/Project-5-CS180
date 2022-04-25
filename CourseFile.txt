@@ -1,15 +1,16 @@
 CS 18000,Teacher1,Discussion1
-Student1,Reply1
-
+Student1,Reply1,1
+-
 CS 18000,Teacher1,Discussion2
-Student1,Reply1
-Student2,Reply2
-
+Student1,Reply1,1
+Student2,Reply2,2
+-
 CS 18000,Teacher1,Discussion3
-Student1,Reply1
-Student2,Reply2
-Student3,Reply3
-
+Student1,Reply1,3
+Student2,Reply2,4
+Student3,Reply3,5
+-
 CS 24000,Teacher2,Discussion1
-Student1,Reply1
-Student2,Reply2
+Student1,Reply1,6
+Student2,Reply2,7
+-
