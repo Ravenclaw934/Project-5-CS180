@@ -1,54 +1,31 @@
 import java.util.ArrayList;
 
-/**
- * Discussion
- *
- * Discussion object to be used in Course.
- *
- * Made for teachers to post discussions
- * 
- * @author Anthony Whittle, L02
- *
- * @version 04/08/2022
- *
- */
-
 public class Discussion implements Post {
 
-	Teacher poster;
 	String message;
 	ArrayList<Reply> replies = new ArrayList<Reply>();
 	int numReplies = 0;
 	String course;
 	
-	public Discussion(Teacher poster, String message) {
-		this.poster = poster;
-		this.message = message;
-	}
-
 	public Discussion(String message) {
 		this.message = message;
 	}
 	
-	public Discussion(Teacher poster, String message, ArrayList<Reply> replies)
+	public Discussion(String message, ArrayList<Reply> replies)
 	{
-		this.poster = poster;
+
 		this.message = message;
 		this.replies = replies;
 	}
-	public Discussion(String course, Teacher poster, String message) {
-		this.poster = poster;
+	public Discussion(String course, String message) {
 		this.message = message;
 		this.course = course;
 	}
 	
-	public void editDiscussion(Teacher editer, String edited) throws InvalidUserException
+	public void editDiscussion(Teacher editer, String message)
 	{
-		if (editer == poster)
-		{
-			throw new InvalidUserException("You cannot edit a post if you did not originally post it!");
-		}
-		this.message = edited;
+
+		this.message = message;
 		
 	}
 	
@@ -57,13 +34,6 @@ public class Discussion implements Post {
 	{
 		
 		return message;
-		
-	}
-
-	@Override
-	public User getPoster() throws ActionFailedException
-	{
-		return poster;
 		
 	}
 	
@@ -90,6 +60,11 @@ public class Discussion implements Post {
 	public String getCourse() 
 	{
 		return course;
+	}
+
+	@Override
+	public User getPoster() throws ActionFailedException {
+		return null;
 	}
 
 }
