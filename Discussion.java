@@ -1,16 +1,17 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Discussion implements Post {
+public class Discussion implements Post, Serializable {
 
 	String message;
 	ArrayList<Reply> replies = new ArrayList<Reply>();
 	int numReplies = 0;
 	String course;
-	
+
 	public Discussion(String message) {
 		this.message = message;
 	}
-	
+
 	public Discussion(String message, ArrayList<Reply> replies)
 	{
 
@@ -21,43 +22,43 @@ public class Discussion implements Post {
 		this.message = message;
 		this.course = course;
 	}
-	
+
 	public void editDiscussion(Teacher editer, String message)
 	{
 
 		this.message = message;
-		
+
 	}
-	
+
 	@Override
 	public String getMessage() throws ActionFailedException
 	{
-		
+
 		return message;
-		
+
 	}
-	
+
 	public int getReplies() throws ActionFailedException
 	{
 		return replies.size();
 	}
-	
+
 	public void setReplies(ArrayList<Reply> replies)
 	{
 		this.replies = replies;
 	}
-	
+
 	public ArrayList<Reply> getReplyArray()
 	{
-		return replies;	
+		return replies;
 	}
-	
-	public void increaseReply() 
+
+	public void increaseReply()
 	{
-		numReplies++;	
+		numReplies++;
 	}
-	
-	public String getCourse() 
+
+	public String getCourse()
 	{
 		return course;
 	}
