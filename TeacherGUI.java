@@ -2,6 +2,7 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
@@ -36,6 +37,7 @@ public class TeacherGUI extends JComponent implements Runnable {
 	public ArrayList<Student> students = new ArrayList<Student>();
     public ArrayList<Teacher> teachers = new ArrayList<Teacher>();
     public ArrayList<Course> courses = new ArrayList<Course>();
+	public ArrayList<Discussion> discussions = new ArrayList<Discussion>();
     
     // Login text fields, labels, and buttons
     public JTextField userText;
@@ -75,7 +77,30 @@ public class TeacherGUI extends JComponent implements Runnable {
     public JButton editPassword = new JButton("Change Password");
     public JLabel deleteText = new JLabel("Delete Account");
     public JButton deleteAccount = new JButton("Delete");
-    
+	public JLabel backText = new JLabel("Go Back");
+	public JButton goBack = new JButton("Back");
+
+	// Course Creation Menu TextFields, Labels, Button
+	public JLabel createNewCourse = new JLabel("Create Course: ");
+	public JLabel coursePrompt = new JLabel("Course Name: ");
+	public JButton createCourseButton = new JButton("Create Course");
+
+	// Discussion Creation Menu Labels and Button
+	public JLabel createNewDisc = new JLabel("Create Discussion:");
+	public JLabel discPrompt = new JLabel("Discussion Name: ");
+	public JButton createDiscussionButton = new JButton("Create Discussion");
+
+	// Discussion Creation Menu Labels and Button
+	public JLabel editNewDisc = new JLabel("Edit Discussion:");
+	public JLabel editDiscPrompt = new JLabel("Pick a discussion number to edit: ");
+	public JButton editDiscussionButton = new JButton("Edit Discussion");
+	public JLabel changeText = new JLabel("What are you changing it into?");
+
+	// Discussion Delete Menu Labels and Button
+	public JLabel deleteDisc = new JLabel("Delete Discussion: ");
+	public JLabel deleteDiscPrompt = new JLabel("Pick a discussion number to delete: ");
+	public JButton deleteDiscussionButton = new JButton("Delete Discussion");
+
     // Refresh Button
     public JButton refresh = new JButton("Refresh");
     
@@ -242,7 +267,7 @@ public class TeacherGUI extends JComponent implements Runnable {
     	    public void actionPerformed(ActionEvent e) {
     	        
     	    	
-    	        
+    	        courseMenu();
     	        
     	    }
     	});
@@ -251,7 +276,7 @@ public class TeacherGUI extends JComponent implements Runnable {
     	    public void actionPerformed(ActionEvent e) {
     	        
     	    	
-    	        
+    	        DiscussionMenu();
     	        
     	    }
     	});
@@ -260,7 +285,7 @@ public class TeacherGUI extends JComponent implements Runnable {
     	    public void actionPerformed(ActionEvent e) {
     	        
     	    	
-    	        
+    	        EditDiscussionMenu();
     	        
     	    }
     	});
@@ -269,7 +294,7 @@ public class TeacherGUI extends JComponent implements Runnable {
     	    public void actionPerformed(ActionEvent e) {
     	        
     	    	
-    	        
+    	        deleteDiscussionMenu();
     	        
     	    }
     	});
@@ -341,6 +366,8 @@ public class TeacherGUI extends JComponent implements Runnable {
     	center.add(editPassword);
     	center.add(deleteText);
     	center.add(deleteAccount);
+		center.add(backText);
+		center.add(goBack);
     	
 		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
 		content.add(center);
@@ -387,6 +414,15 @@ public class TeacherGUI extends JComponent implements Runnable {
     	        
     	    }
     	});
+
+		goBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				mainMenu();
+
+
+			}
+		});
     	
     }
     
@@ -448,7 +484,7 @@ public class TeacherGUI extends JComponent implements Runnable {
     {
     	frame.dispose();
     	
-    	frame = new JFrame("Change Username");
+    	frame = new JFrame("Change Password");
     	content = frame.getContentPane();
     	
     	JPanel center = new JPanel();
@@ -472,35 +508,359 @@ public class TeacherGUI extends JComponent implements Runnable {
 		    	
 				for(int i = 0; i < teachers.size(); i++)
 				{
-					if(teachers.get(i).getUsername().equals(username))
+					if(teachers.get(i).getPassword().equals(oldPassword))
 					{
-						
-						teachers.get(i).setPassword(password);
-						
+						try {
+							teachers.get(i).setPassword(password);
+						} catch (PasswordLimiterException ex) {
+							JOptionPane.showInternalMessageDialog(null, "Password is already in use!", "Action Failed",
+									JOptionPane.ERROR_MESSAGE);
+						}
+
 					}
 				}
 				
 				accountMenu();
-		        
-		        
-		    }
+
+
+			}
 		});
-    	
-    	frame = new JFrame("Change Password");
-    	content = frame.getContentPane();
-    	
-    	
+
+		frame.setSize(600, 400);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
     	
     }
-    
-    /*
-    .addActionListener(new ActionListener() {
-	    public void actionPerformed(ActionEvent e) {
-    
-	    	
-	        
-    
-	    }
-	});
-    */
+
+
+	public void courseMenu() {
+
+		frame.dispose();
+
+		frame = new JFrame("Create Course");
+		content = frame.getContentPane();
+
+
+		JPanel center = new JPanel();
+
+		center.add(createNewCourse);
+		center.add(createCourseButton);
+		center.add(backText);
+		center.add(goBack);
+
+		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+		content.add(center);
+
+		frame.setSize(600, 400);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+
+		createCourseButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				createCourse();
+
+			}
+		});
+
+		goBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				mainMenu();
+
+			}
+		});
+
+	}
+
+
+	public void createCourse(){
+		frame.dispose();
+
+		frame = new JFrame("Create Course");
+		content = frame.getContentPane();
+
+		JPanel center = new JPanel();
+
+		center.add(coursePrompt);
+		center.add(passText);
+		center.add(confirm);
+
+		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+		content.add(center);
+
+
+		passText.setText("");
+
+
+		confirm.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				Course course = new Course(passText.getText());
+
+				courses.add(course);
+
+				courseMenu();
+
+
+			}
+		});
+
+		frame.setSize(600, 400);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+
+	}
+
+	public void DiscussionMenu(){
+
+		frame.dispose();
+
+		frame = new JFrame("Create Discussion");
+		content = frame.getContentPane();
+
+		JLabel discList = new JLabel("You currently have " + discussions.size() + " discussions.");
+		JPanel center = new JPanel();
+
+
+		center.add(discList);
+		center.add(createNewDisc);
+		center.add(createDiscussionButton);
+		center.add(backText);
+		center.add(goBack);
+
+		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+		content.add(center);
+
+		frame.setSize(600, 400);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+
+		createDiscussionButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				createDiscussion();
+
+			}
+		});
+
+		goBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				mainMenu();
+
+			}
+		});
+
+
+	}
+
+	public void createDiscussion(){
+
+		frame.dispose();
+
+		frame = new JFrame("Create Discussion");
+		content = frame.getContentPane();
+
+		JPanel center = new JPanel();
+
+		center.add(discPrompt);
+		center.add(passText);
+		center.add(confirm);
+
+		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+		content.add(center);
+
+
+		passText.setText("");
+
+
+		confirm.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				Discussion disc = new Discussion(passText.getText());
+
+				discussions.add(disc);
+
+				DiscussionMenu();
+
+
+			}
+		});
+
+		frame.setSize(600, 400);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+
+	}
+
+	public void EditDiscussionMenu(){
+
+		frame.dispose();
+
+		frame = new JFrame("Edit Discussion");
+		content = frame.getContentPane();
+
+		JLabel discList = new JLabel("You currently have " + discussions.size() + " discussions.");
+		JPanel center = new JPanel();
+
+		center.add(discList);
+		center.add(editNewDisc);
+		center.add(editDiscussionButton);
+		center.add(backText);
+		center.add(goBack);
+
+		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+		content.add(center);
+
+		frame.setSize(600, 400);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+
+		editDiscussionButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				editDiscussion();
+
+			}
+		});
+
+		goBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				mainMenu();
+
+			}
+		});
+
+
+	}
+
+	public void editDiscussion() {
+
+		frame.dispose();
+
+		frame = new JFrame("Edit Discussion");
+		content = frame.getContentPane();
+
+		JPanel center = new JPanel();
+
+		center.add(editDiscPrompt);
+		center.add(userText);
+		center.add(changeText);
+		center.add(passText);
+		center.add(confirm);
+
+		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+		content.add(center);
+
+
+		passText.setText("");
+
+
+		confirm.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				int discNum = Integer.parseInt(userText.getText());
+
+				Discussion discussion = new Discussion(passText.getText());
+
+				discussions.set(discNum, discussion);
+
+			}
+		});
+
+		frame.setSize(600, 400);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+
+	}
+
+	public void deleteDiscussionMenu(){
+
+		frame.dispose();
+
+		frame = new JFrame("Delete Discussion");
+		content = frame.getContentPane();
+
+		JLabel discList = new JLabel("You currently have " + discussions.size() + " discussions.");
+		JPanel center = new JPanel();
+
+		center.add(discList);
+		center.add(deleteDisc);
+		center.add(deleteDiscussionButton);
+		center.add(backText);
+		center.add(goBack);
+
+		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+		content.add(center);
+
+		frame.setSize(600, 400);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+
+		deleteDiscussionButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				deleteDiscussion();
+
+			}
+		});
+
+		goBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				mainMenu();
+
+			}
+		});
+
+
+	}
+
+	public void deleteDiscussion() {
+		frame.dispose();
+
+		frame = new JFrame("Delete Discussion");
+		content = frame.getContentPane();
+
+		JPanel center = new JPanel();
+
+		center.add(deleteDiscPrompt);
+
+		center.add(passText);
+		center.add(confirm);
+
+		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+		content.add(center);
+
+
+		passText.setText("");
+
+
+		confirm.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				int discNum = Integer.parseInt(userText.getText());
+
+
+				discussions.remove(discNum);
+
+			}
+		});
+
+		frame.setSize(600, 400);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+
+	}
 }
