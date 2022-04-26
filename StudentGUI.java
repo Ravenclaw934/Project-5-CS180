@@ -64,8 +64,8 @@ public class StudentGUI extends JComponent implements Runnable {
         students = new ArrayList<Student>();
         students.add(student);
         testReps.add(testRep);
-        testDisc = new Discussion(Jones, "Test message", testReps);
-        testDisc2 = new Discussion(Jones, "Test message 2", testReps);
+        testDisc = new Discussion("Test message", testReps);
+        testDisc2 = new Discussion("Test message 2", testReps);
         testDiscs.add(testDisc);
         testDiscs.add(testDisc2);
         testCourse = new Course("CS 180", Jones, testDiscs );
@@ -152,6 +152,11 @@ public class StudentGUI extends JComponent implements Runnable {
         this.courseList = courses;
     }
 
+    public StudentGUI(ArrayList<Student> students, ArrayList<Course> courses) {
+        this.students = students;
+        this.courseList = courses;
+    }
+
     public void checkLogin() {
         boolean usernameExists = false;
         boolean login = false;
@@ -178,7 +183,6 @@ public class StudentGUI extends JComponent implements Runnable {
                 login = true;
                 mainPageDisplay();
                 System.out.println("LOGGED IN LFGGGGGG ");
-
             }
         }*/
 
@@ -270,7 +274,7 @@ public class StudentGUI extends JComponent implements Runnable {
         } catch (Exception e) {
 
             e.printStackTrace();
-            
+
         }
 
         center.add(userPrompt);
@@ -304,204 +308,200 @@ public class StudentGUI extends JComponent implements Runnable {
 
     public void displayAccount(Container con) {
 
-            frame.dispose();
+        frame.dispose();
 
-            frame = new JFrame("Account Settings");
-            content = frame.getContentPane();
+        frame = new JFrame("Account Settings");
+        content = frame.getContentPane();
 
-            usernameText = new JLabel("Username: " + username);
-            passwordText = new JLabel("Password: " + password);
-            grade =new JLabel("Current Grade: " + student.getGrade());
+        usernameText = new JLabel("Username: " + username);
+        passwordText = new JLabel("Password: " + password);
+        grade =new JLabel("Current Grade: " + student.getGrade());
 
-            JPanel center = new JPanel();
+        JPanel center = new JPanel();
 
-            center.add(usernameText);
-            center.add(editUsername);
-            center.add(passwordText);
-            center.add(editPassword);
-            center.add(grade);
-            center.add(deleteText);
-            center.add(deleteAccount);
+        center.add(usernameText);
+        center.add(editUsername);
+        center.add(passwordText);
+        center.add(editPassword);
+        center.add(grade);
+        center.add(deleteText);
+        center.add(deleteAccount);
 
-            center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
-            content.add(center);
+        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+        content.add(center);
 
-            frame.setSize(600, 400);
-            frame.setLocationRelativeTo(null);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setVisible(true);
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
 
-            editUsername.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
+        editUsername.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
 
-                    changeUsername();
+                changeUsername();
 
-
-                }
-            });
-            editPassword.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-
-                    changePassword();
-
-
-                }
-            });
-
-            deleteAccount.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-
-                    frame.dispose();
-
-                    for(int i = 0; i < students.size(); i++)
-                    {
-                        if(students.get(i).getUsername().equals(username))
-                        {
-                            students.remove(i);
-                        }
-                    }
-
-
-                    run();
-
-
-                }
-            });
-
-        }
-
-        public void changeUsername() {
-            frame.dispose();
-
-            frame = new JFrame("Change Username");
-            content = frame.getContentPane();
-
-            JPanel center = new JPanel();
-
-            center.add(userPrompt);
-            center.add(userText);
-            center.add(confirm);
-
-            center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
-            content.add(center);
-
-            String oldUsername = username;
-
-            userText.setText("");
-
-
-            confirm.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-
-                    username = userText.getText();
-
-                    for (int i = 0; i < students.size(); i++) {
-                        if (students.get(i).getUsername().equals(oldUsername)) {
-                            try {
-                                students.get(i).setUsername(username);
-                            } catch (AccountExistsException e1) {
-                                JOptionPane.showInternalMessageDialog(null, "Username is already in use!", "Action Failed",
-                                        JOptionPane.ERROR_MESSAGE);
-                            }
-                        }
-                    }
-
-                    mainPageDisplay();
-                }
-            });
-
-
-            frame.setSize(600, 400);
-            frame.setLocationRelativeTo(null);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setVisible(true);
-
-        }
-
-        public void changePassword()
-        {
-            frame.dispose();
-
-            frame = new JFrame("Change Username");
-            content = frame.getContentPane();
-
-            JPanel center = new JPanel();
-
-            center.add(passPrompt);
-            center.add(passText);
-            center.add(confirm);
-
-            center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
-            content.add(center);
-
-            String oldPassword = password;
-
-            passText.setText("");
-
-
-            confirm.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-
-                    password = passText.getText();
-
-                    for(int i = 0; i < students.size(); i++)
-                    {
-                        if(students.get(i).getPassword().equals(oldPassword))
-                        {
-                            try {
-                                students.get(i).setPassword(password);
-                            } catch (PasswordLimiterException ex) {
-                                ex.printStackTrace();
-                            }
-
-                        }
-                    }
-
-                    mainPageDisplay();
-
-
-                }
-            });
-
-            frame.setSize(600, 400);
-            frame.setLocationRelativeTo(null);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setVisible(true);
-
-        }
-
-
-        public void displayCourse(Course course, Container con) {
-            JPanel discChoice = new JPanel();
-            discChoice.setLayout(new BoxLayout(discChoice, BoxLayout.Y_AXIS));
-
-            ArrayList<Discussion> forum = course.getForum();
-            String[] discNames = new String[forum.size()];
-
-            try {
-                for (int i = 0; i < forum.size(); i++) {
-                    discNames[i] = (forum.get(i).getMessage());
-                }
-            } catch (Exception e) {
 
             }
-            discDropdown = new JComboBox<>(discNames);
-            viewReplyButton = new JButton("See Replies");
-            viewReplyButton.addActionListener(actionListener);
+        });
+        editPassword.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
 
-            try {
-                discChoice.add(discDropdown);
-                discChoice.add(viewReplyButton);
-                con.add(BorderLayout.CENTER, discChoice);
-                con.revalidate(); // invokes layout manager
-                con.repaint();
-            } catch (NullPointerException e) {
-                System.out.println("Null");
-                e.printStackTrace();
+                changePassword();
+
+
             }
+        });
 
+        deleteAccount.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                frame.dispose();
+
+                for(int i = 0; i < students.size(); i++)
+                {
+                    if(students.get(i).getUsername().equals(username))
+                    {
+                        students.remove(i);
+                    }
+                }
+
+
+                run();
+
+
+            }
+        });
+
+    }
+
+    public void changeUsername() {
+        frame.dispose();
+
+        frame = new JFrame("Change Username");
+        content = frame.getContentPane();
+
+        JPanel center = new JPanel();
+
+        center.add(userPrompt);
+        center.add(userText);
+        center.add(confirm);
+
+        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+        content.add(center);
+
+        String oldUsername = username;
+
+        userText.setText("");
+
+
+        confirm.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                username = userText.getText();
+
+                for (int i = 0; i < students.size(); i++) {
+                    if (students.get(i).getUsername().equals(oldUsername)) {
+                        try {
+                            students.get(i).setUsername(username);
+                        } catch (AccountExistsException e1) {
+                            JOptionPane.showInternalMessageDialog(null, "Username is already in use!", "Action Failed",
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+
+                mainPageDisplay();
+            }
+        });
+
+
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+
+    }
+
+    public void changePassword()
+    {
+        frame.dispose();
+
+        frame = new JFrame("Change Username");
+        content = frame.getContentPane();
+
+        JPanel center = new JPanel();
+
+        center.add(passPrompt);
+        center.add(passText);
+        center.add(confirm);
+
+        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+        content.add(center);
+
+        String oldPassword = password;
+
+        passText.setText("");
+
+
+        confirm.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                password = passText.getText();
+
+                for(int i = 0; i < students.size(); i++)
+                {
+                    if(students.get(i).getPassword().equals(oldPassword))
+                    {
+                        students.get(i).setPassword(password);
+
+                    }
+                }
+
+                mainPageDisplay();
+
+
+            }
+        });
+
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+
+    }
+
+
+    public void displayCourse(Course course, Container con) {
+        JPanel discChoice = new JPanel();
+        discChoice.setLayout(new BoxLayout(discChoice, BoxLayout.Y_AXIS));
+
+        ArrayList<Discussion> forum = course.getForum();
+        String[] discNames = new String[forum.size()];
+
+        try {
+            for (int i = 0; i < forum.size(); i++) {
+                discNames[i] = (forum.get(i).getMessage());
+            }
+        } catch (Exception e) {
 
         }
+        discDropdown = new JComboBox<>(discNames);
+        viewReplyButton = new JButton("See Replies");
+        viewReplyButton.addActionListener(actionListener);
+
+        try {
+            discChoice.add(discDropdown);
+            discChoice.add(viewReplyButton);
+            con.add(BorderLayout.CENTER, discChoice);
+            con.revalidate(); // invokes layout manager
+            con.repaint();
+        } catch (NullPointerException e) {
+            System.out.println("Null");
+            e.printStackTrace();
+        }
+
+
+    }
 
     public void closePage(Container conten) {
 
@@ -524,7 +524,6 @@ public class StudentGUI extends JComponent implements Runnable {
     }
 
     /*public StudentGUI() {
-
         testDiscs = new ArrayList<>();
     }*/
 
