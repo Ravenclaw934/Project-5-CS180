@@ -16,19 +16,16 @@ import java.util.ArrayList;
 
 public class StudentGUI extends JComponent implements Runnable {
 
-    private Image image; // the canvas
-    private Graphics2D graphics2D;  // this will enable drawing
     public Color currentBack;
     public String[] courseNames ; // set for Testing purposes
     public String username;
     public String password;
     public Student student = new Student("bdgillis", "brunch", "5");
     public ArrayList<Course> courseList = new ArrayList<>();
-    Course C1 = new Course("CS", new Teacher("bgil","buns"));
-    JFrame frame;
-    Container content;
-    Container studentContent;
-    JFrame studentpage;
+    public JFrame frame;
+    public Container content;
+    public Container studentContent;
+    public JFrame studentpage;
     public ArrayList<Student> students;
     public ArrayList<Teacher> teachers;
     public JTextField userText;
@@ -39,13 +36,13 @@ public class StudentGUI extends JComponent implements Runnable {
     public Course currentCourse;
 
     //FOR TESTING
-    Teacher Jones = new Teacher("jjones", "password");
+    public Teacher Jones = new Teacher("jjones", "password");
     public ArrayList<Reply> testReps = new ArrayList<>();
     public Reply testRep = new Reply(student, "Test");
-    ArrayList<Discussion> testDiscs = new ArrayList<>();
-    Discussion testDisc;
-    Discussion testDisc2;
-    Course testCourse;
+    public ArrayList<Discussion> testDiscs = new ArrayList<>();
+    public Discussion testDisc;
+    public Discussion testDisc2;
+    public Course testCourse;
 
     //Account page
     public JLabel usernameText = new JLabel("Username: ");
@@ -58,9 +55,9 @@ public class StudentGUI extends JComponent implements Runnable {
     public JLabel grade;
 
     // Discussion page
-    JFileChooser fileImport;
-    JButton addReply = new JButton("Add Reply");
-    JTextField newReplyText;
+    public JFileChooser fileImport;
+    public JButton addReply = new JButton("Add Reply");
+    public JTextField newReplyText;
 
 
     public StudentGUI() {
@@ -80,18 +77,16 @@ public class StudentGUI extends JComponent implements Runnable {
         for (int i = 0; i < courseList.size(); i++) {
             courseNames[i] = courseList.get(i).getCourseName();
         }
-        this.courseNames = courseNames;
-
     }
 
-    JButton discussionButton; // a button to view discussions
-    JButton courseButton; // a button to veiw courses
-    JButton accountButton; // a button to edit/view account
-    JButton viewReplyButton; // a button to view replies to a discussion
-    JButton writeReplyButton; // a button to write a reply
-    JButton deleteButton;
-    JButton userUpdate;
-    JButton passUpdate;
+    public JButton discussionButton; // a button to view discussions
+    public JButton courseButton; // a button to veiw courses
+    public JButton accountButton; // a button to edit/view account
+    public JButton viewReplyButton; // a button to view replies to a discussion
+    public JButton writeReplyButton; // a button to write a reply
+    public JButton deleteButton;
+    public JButton userUpdate;
+    public JButton passUpdate;
     JComboBox<String> courseDropdown;
     JComboBox<String> discDropdown;
     public JButton refresh = new JButton("Refresh");
@@ -112,9 +107,8 @@ public class StudentGUI extends JComponent implements Runnable {
                         currentCourse = courseList.get(i);
                     }
                 }
-                page.displayCourse(currentCourse, frame.getContentPane());
+                displayCourse(currentCourse, frame.getContentPane());
                 System.out.println(currentCourse.getCourseName());
-
             }
             if (e.getSource() == accountButton) {
                 displayAccount(frame.getContentPane());
@@ -127,6 +121,9 @@ public class StudentGUI extends JComponent implements Runnable {
                 Discussion selectDisc = null;
                 String selectDiscName = discDropdown.getItemAt(discDropdown.getSelectedIndex());
                 try {
+                    if (currentCourse != null) {
+                        System.out.println("COURSE EXISTS!!");
+                    }
                     for (int i = 0; i < currentCourse.getForum().size(); i++) {
                         try {
                             if (selectDiscName.equals(currentCourse.getForum().get(i).getMessage())) {
@@ -136,10 +133,14 @@ public class StudentGUI extends JComponent implements Runnable {
                             ex.printStackTrace();
                         }
                     }
-                    page.displayDisc(selectDisc, frame.getContentPane());
+                    displayDisc(selectDisc, frame.getContentPane());
                 } catch (NullPointerException nul) {
                     System.out.println("Null");
+                    nul.printStackTrace();
                 }
+            }
+            if (e.getSource() == fileImport) {
+
             }
         }
     };
@@ -230,11 +231,9 @@ public class StudentGUI extends JComponent implements Runnable {
             JPanel discussionLayout = new JPanel();
 
             JLabel discussPrompt = new JLabel(discussion.getMessage() + "\nPosted by: " + discussion.getPoster());
-            fileImport = new JFileChooser();
-            fileImport.setDialogTitle("Pick Reply File");
+
 
             discussionLayout.add(discussPrompt);
-            discussionLayout.add(fileImport);
             con.add(discussionLayout, BorderLayout.CENTER);
             frame.setSize(600, 400);
             frame.setLocationRelativeTo(null);
@@ -252,6 +251,11 @@ public class StudentGUI extends JComponent implements Runnable {
         });
     }
 
+    public void fileSelect() {
+        fileImport = new JFileChooser();
+        fileImport.setDialogTitle("Pick Reply File");
+    }
+
     public void newReplyFrame(Discussion current) {
         frame.dispose();
 
@@ -260,11 +264,13 @@ public class StudentGUI extends JComponent implements Runnable {
 
         JPanel center = new JPanel();
         try {
-            JLabel discussPrompt = new JLabel(current.getMessage() + "\nPosted by: " + current.getPoster());
+            JLabel discussPrompt = new JLabel(current.getMessage() + "\nPosted by: " + current.getPoster().getUsername());
             center.add(discussPrompt);
 
         } catch (Exception e) {
+
             e.printStackTrace();
+            
         }
 
         center.add(userPrompt);
