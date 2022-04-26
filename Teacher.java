@@ -1,9 +1,10 @@
+import java.io.Serializable;
 
-public class Teacher implements User {
+public class Teacher implements User, Serializable {
 
 	String username;
 	String password;
-	
+
 	public Teacher(String username, String password)
 	{
 		this.username = username;
@@ -12,40 +13,40 @@ public class Teacher implements User {
 
 	@Override
 	public Discussion postDiscussion(String message) throws PermissionDeniedException {
-		
+
 		Discussion d = new Discussion(message);
-		
+
 		return d;
-		
+
 	}
 
 	@Override
-	public Reply reply(String message) throws PermissionDeniedException 
+	public Reply reply(String message) throws PermissionDeniedException
 	{
-		
+
 		Reply r = new Reply(this, message);
-		
+
 		return r;
-		
+
 	}
 
 	@Override
-	public String getUsername() 
+	public String getUsername()
 	{
 		return username;
 	}
 
 	@Override
-	public String getPassword() 
+	public String getPassword()
 	{
 		return password;
 	}
 
 	@Override
-	public void setUsername(String username) throws AccountExistsException 
+	public void setUsername(String username) throws AccountExistsException
 	{
 		this.username = username;
-		
+
 	}
 
 	@Override
@@ -57,20 +58,20 @@ public class Teacher implements User {
 	@Override
 	public Discussion editDiscussion(String message) throws PermissionDeniedException, ActionFailedException
 	{
-		
+
 		Discussion d = new Discussion(message);
-		
+
 		return d;
-		
+
 	}
 
 	@Override
 	public Reply postReply(String message, Discussion post) throws ActionFailedException {
-		
+
 		Reply r = new Reply(this, message);
-		
+
 		return r;
-		
+
 	}
 
 
