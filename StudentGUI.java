@@ -114,6 +114,7 @@ public class StudentGUI extends JComponent implements Runnable {
             if (e.getSource() == viewReplyButton) {
                 Discussion selectDisc = null;
                 String selectDiscName = discDropdown.getItemAt(discDropdown.getSelectedIndex());
+
                 try {
                     if (currentCourse != null) {
                         System.out.println("COURSE EXISTS!!");
@@ -302,18 +303,24 @@ public class StudentGUI extends JComponent implements Runnable {
                     current.setReplies(temp);
 
                     try {
+                        for (Course c : courseList) {
+                            if (c.getForum().contains(current)) {
+                                current.setCourse(c.getCourseName());
+                            }
+                        }
+
                         PrintWriter writer = new PrintWriter(socket.getOutputStream());
                         writer.println("New Reply");
                         writer.flush();
                         writer.println(current.getCourse());
                         writer.flush();
-                        writer.println(current.getPoster().getUsername());
+                        writer.println("Teacher");
                         writer.flush();
                         writer.println(current.getMessage());
                         writer.flush();
                         writer.println(student.getUsername());
                         writer.flush();
-                        writer.println(newReplyText.getText());
+                        writer.println(newRep.getMessage());
                         writer.flush();
 
                     } catch (Exception ex) {

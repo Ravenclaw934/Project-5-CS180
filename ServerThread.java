@@ -649,17 +649,32 @@ public class ServerThread implements Runnable {
             }
 
             int discussionLocation = lines.indexOf(course + "," + teacher + "," + discussion);
+            int newI = 0;
 
             try {
                 File f = new File(COURSE_FILE);
                 FileOutputStream fos = new FileOutputStream(f, false);
                 PrintWriter pw = new PrintWriter(fos);
+
                 for (int i = 0; i <= discussionLocation; i++) {
                     pw.println(lines.get(i));
                 }
-                pw.println(user + "," + reply + "," + "0");
                 for (int i = discussionLocation + 1; i < lines.size(); i++) {
-                    pw.println(lines.get(i));
+                    if (!lines.get(i).equals("-")) {
+                        pw.println(lines.get(i));
+                    } else {
+                        newI = i;
+                        break;
+                    }
+                }
+                pw.println(user + "," + reply + "," + "0");
+                pw.println("-");
+                for (int i = newI + 1; i < lines.size(); i++) {
+                    if (i == lines.size() - 1) {
+                        pw.print(lines.get(i));
+                    } else {
+                        pw.println(lines.get(i));
+                    }
                 }
 
                 pw.close();
