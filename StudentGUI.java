@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.EventListener;
 
 /**
  * A program makes creates a page GUI.
@@ -118,11 +119,13 @@ public class StudentGUI extends JComponent implements Runnable {
                         System.out.println("COURSE EXISTS!!");
                     }
                     for (int i = 0; i < currentCourse.getForum().size(); i++) {
-
-                        if (selectDiscName.equals(currentCourse.getForum().get(i).getMessage())) {
-                            selectDisc = currentCourse.getForum().get(i);
+                        try {
+                            if (selectDiscName.equals(currentCourse.getForum().get(i).getMessage())) {
+                                selectDisc = currentCourse.getForum().get(i);
+                            }
+                        } catch (ActionFailedException ex) {
+                            ex.printStackTrace();
                         }
-
                     }
                     displayDisc(selectDisc, frame.getContentPane());
                 } catch (NullPointerException nul) {
@@ -229,36 +232,40 @@ public class StudentGUI extends JComponent implements Runnable {
         JPanel discussionLayout = new JPanel();
         discussionLayout.setLayout(new BoxLayout(discussionLayout, BoxLayout.Y_AXIS));
 
+        try {
+            JLabel discussPrompt = new JLabel(discussion.getMessage());
 
-        JLabel discussPrompt = new JLabel(discussion.getMessage());
-
-        Reply[] replies = new Reply[discussion.getReplies()];
-        String allReplies = "";
-        for (int i = 0; i < discussion.getReplies(); i++) {
-            replies[i] = discussion.getReplyArray().get(i);
-            allReplies += "<html>" + replies[i].getPoster().getUsername() + ": " + replies[i].getMessage() + "<br>";
-        }
-        allReplies += "</html>";
-
-        replyDisp = new JLabel(allReplies);
-        addReply = new JButton("Write Reply");
-        addReply.addActionListener(actionListener);
-
-        discussionLayout.add(discussPrompt);
-        discussionLayout.add(replyDisp);
-        discussionLayout.add(addReply);
-        content.add(discussionLayout, BorderLayout.CENTER);
-        frame.setSize(600, 400);
-        frame.setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setVisible(true);
-
-
-        addReply.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                newReplyFrame(discussion);
+            Reply[] replies = new Reply[discussion.getReplies()];
+            String allReplies = "";
+            for (int i = 0; i < discussion.getReplies(); i++) {
+                replies[i] = discussion.getReplyArray().get(i);
+                allReplies += "<html>" + replies[i].getPoster().getUsername() + ": " + replies[i].getMessage() + "<br>";
             }
-        });
+            allReplies += "</html>";
+
+            replyDisp = new JLabel(allReplies);
+            addReply = new JButton("Write Reply");
+            addReply.addActionListener(actionListener);
+
+            discussionLayout.add(discussPrompt);
+            discussionLayout.add(replyDisp);
+            discussionLayout.add(addReply);
+            content.add(discussionLayout, BorderLayout.CENTER);
+            frame.setSize(600, 400);
+            frame.setLocationRelativeTo(null);
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.setVisible(true);
+
+
+            addReply.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    newReplyFrame(discussion);
+                }
+            });
+
+        } catch (ActionFailedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void fileSelect() {
@@ -274,51 +281,55 @@ public class StudentGUI extends JComponent implements Runnable {
         JPanel center = new JPanel();
         JLabel replyPrompt = new JLabel("Write your reply");
 
+        try {
             JLabel discussPrompt = new JLabel(current.getMessage());
             center.add(discussPrompt);
 
-        center.add(replyPrompt);
-        center.add(userText);
-        center.add(confirm);
+            center.add(replyPrompt);
+            center.add(userText);
+            center.add(confirm);
 
-        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
-        content.add(center);
+            center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+            content.add(center);
 
-        userText.setText("");
+            userText.setText("");
 
-        confirm.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Reply newRep = new Reply(student, userText.getText());
-                ArrayList<Reply> temp = current.getReplyArray();
-                temp.add(newRep);
-                current.setReplies(temp);
+            confirm.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    Reply newRep = new Reply(student, userText.getText());
+                    ArrayList<Reply> temp = current.getReplyArray();
+                    temp.add(newRep);
+                    current.setReplies(temp);
 
-                try {
-                    PrintWriter writer = new PrintWriter(socket.getOutputStream());
-                    writer.println("New Reply");
-                    writer.flush();
-                    writer.println(current.getCourse());
-                    writer.flush();
-                    writer.println(current.getPoster().getUsername());
-                    writer.flush();
-                    writer.println(current.getMessage());
-                    writer.flush();
-                    writer.println(student.getUsername());
-                    writer.flush();
-                    writer.println(newReplyText.getText());
-                    writer.flush();
+                    try {
+                        PrintWriter writer = new PrintWriter(socket.getOutputStream());
+                        writer.println("New Reply");
+                        writer.flush();
+                        writer.println(current.getCourse());
+                        writer.flush();
+                        writer.println(current.getPoster().getUsername());
+                        writer.flush();
+                        writer.println(current.getMessage());
+                        writer.flush();
+                        writer.println(student.getUsername());
+                        writer.flush();
+                        writer.println(newReplyText.getText());
+                        writer.flush();
 
-                } catch (IOException ex) {
-                    ex.printStackTrace();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    displayDisc(current, content);
                 }
-                displayDisc(current, content);
-            }
-        });
+            });
 
-        frame.setSize(600, 400);
-        frame.setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
+            frame.setSize(600, 400);
+            frame.setLocationRelativeTo(null);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setVisible(true);
+        } catch (ActionFailedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void displayAccount(Container con) {
@@ -370,17 +381,12 @@ public class StudentGUI extends JComponent implements Runnable {
 
                 changeUsername();
 
-                for (ActionListener a : editUsername.getActionListeners()) {
-                    editUsername.removeActionListener(a);
-                }
-
             }
         });
         editPassword.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
                 changePassword();
-
 
             }
         });
@@ -450,15 +456,24 @@ public class StudentGUI extends JComponent implements Runnable {
                         if (students.get(i).getUsername().equals(oldUsername)) {
                             username = userText.getText();
                             students.get(i).setUsername(username);
+
+                            try {
+                                PrintWriter writer = new PrintWriter(socket.getOutputStream());
+                                writer.println("Change Student Username");
+                                writer.flush();
+                                writer.println(oldUsername);
+                                writer.flush();
+                                writer.println(username);
+                                writer.flush();
+
+                            } catch (IOException exception) {
+                                exception.printStackTrace();
+                            }
                         }
                     }
                 } catch (AccountExistsException e1) {
                     JOptionPane.showInternalMessageDialog(null, "Username is already in use!", "Action Failed",
                             JOptionPane.ERROR_MESSAGE);
-                }
-
-                for (ActionListener a : confirm.getActionListeners()) {
-                    confirm.removeActionListener(a);
                 }
 
                 mainPageDisplay();
@@ -476,7 +491,7 @@ public class StudentGUI extends JComponent implements Runnable {
     {
         frame.dispose();
 
-        frame = new JFrame("Change Username");
+        frame = new JFrame("Change Password");
         content = frame.getContentPane();
 
         JPanel center = new JPanel();
@@ -488,8 +503,6 @@ public class StudentGUI extends JComponent implements Runnable {
         center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
         content.add(center);
 
-        String oldPassword = password;
-
         passText.setText("");
 
 
@@ -500,10 +513,22 @@ public class StudentGUI extends JComponent implements Runnable {
 
                 for(int i = 0; i < students.size(); i++)
                 {
-                    if(students.get(i).getPassword().equals(oldPassword))
+                    if(students.get(i).getUsername().equals(student.getUsername()))
                     {
                         students.get(i).setPassword(password);
 
+                        try {
+                            PrintWriter writer = new PrintWriter(socket.getOutputStream());
+                            writer.println("Change Student Password");
+                            writer.flush();
+                            writer.println(username);
+                            writer.flush();
+                            writer.println(password);
+                            writer.flush();
+
+                        } catch (IOException exception) {
+                            exception.printStackTrace();
+                        }
                     }
                 }
 

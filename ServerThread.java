@@ -6,9 +6,9 @@ import java.util.ArrayList;
 public class ServerThread implements Runnable {
 
     Socket socket;
-    public static final String STUDENT_FILE = "/Users/briangillis/Library/CloudStorage/OneDrive-purdue.edu/S4 S22/CS 180/Projects/5/StudentFile.txt";
-    public static final String TEACHER_FILE = "/Users/briangillis/Library/CloudStorage/OneDrive-purdue.edu/S4 S22/CS 180/Projects/5/TeacherFile.txt";
-    public static final String COURSE_FILE = "/Users/briangillis/Library/CloudStorage/OneDrive-purdue.edu/S4 S22/CS 180/Projects/5/CourseFile.txt";
+    public static final String STUDENT_FILE = "StudentFile.txt";
+    public static final String TEACHER_FILE = "TeacherFile.txt";
+    public static final String COURSE_FILE = "CourseFile.txt";
     public static final Object STUDENT_GATE = new Object();
     public static final Object TEACHER_GATE = new Object();
     public static final Object COURSE_GATE = new Object();
@@ -57,14 +57,26 @@ public class ServerThread implements Runnable {
 
                     deleteStudent(user);
                 }
+                if (request.equals("Change Student Username")) {
+                    String oldUser = reader.readLine();
+                    String newUser = reader.readLine();
+
+                    changeStudentUser(oldUser, newUser);
+                }
+                if (request.equals("Change Student Password")) {
+                    String user = reader.readLine();
+                    String pass = reader.readLine();
+
+                    changeStudentPass(user, pass);
+                }
                 if (request.equals("New Reply")) {
                     String course = reader.readLine();
                     String poster = reader.readLine();
                     String message = reader.readLine();
                     String student = reader.readLine();
-                    String newreply = reader.readLine();
+                    String newReply = reader.readLine();
 
-                    addReply(course, poster, message, student, newreply);
+                    addReply(course, poster, message, student, newReply);
                 }
             }
 
@@ -97,7 +109,7 @@ public class ServerThread implements Runnable {
         String temp;
         int counter = 0;
         ArrayList<Reply> replies = new ArrayList<>();
-        Course tempCourse = new Course("");
+        Course tempCourse = new Course("", new Teacher("", ""));
         ArrayList<Course> courses = new ArrayList<>();
 
         for (String s : lines) {
@@ -110,7 +122,7 @@ public class ServerThread implements Runnable {
 
                     ArrayList<Discussion> tempDiscs = new ArrayList<>();
                     tempDiscs.add(new Discussion(discName));
-                    tempCourse = new Course(courseName, tempDiscs);
+                    tempCourse = new Course(courseName, new Teacher(teacherName, ""), tempDiscs);
                     counter++;
                 } else {
                     String studentName = s.substring(0, s.indexOf(","));
@@ -216,7 +228,7 @@ public class ServerThread implements Runnable {
             for (String s : lines) {
                 if (s.substring(0, s.indexOf(",")).equals(oldUser)) {
                     String temp = s.substring(s.indexOf(","));
-                    s = newUser + temp;
+                    lines.set(lines.indexOf(s), newUser + temp);
                 }
             }
 
@@ -224,8 +236,15 @@ public class ServerThread implements Runnable {
                 File f = new File(TEACHER_FILE);
                 FileOutputStream fos = new FileOutputStream(f, false);
                 PrintWriter pw = new PrintWriter(fos);
+
+                boolean started = false;
                 for (String s : lines) {
-                    pw.println(s);
+                    if (!started) {
+                        pw.print(s);
+                        started = true;
+                    } else {
+                        pw.print("\n" + s);
+                    }
                 }
 
                 pw.close();
@@ -237,6 +256,7 @@ public class ServerThread implements Runnable {
 
     public void changeStudentUser(String oldUser, String newUser) {
         ArrayList<String> lines = new ArrayList<>();
+
         synchronized (STUDENT_GATE) {
             try {
                 File f = new File(STUDENT_FILE);
@@ -258,7 +278,7 @@ public class ServerThread implements Runnable {
             for (String s : lines) {
                 if (s.substring(0, s.indexOf(",")).equals(oldUser)) {
                     String temp = s.substring(s.indexOf(","));
-                    s = newUser + temp;
+                    lines.set(lines.indexOf(s), newUser + temp);
                 }
             }
 
@@ -266,8 +286,15 @@ public class ServerThread implements Runnable {
                 File f = new File(STUDENT_FILE);
                 FileOutputStream fos = new FileOutputStream(f, false);
                 PrintWriter pw = new PrintWriter(fos);
+
+                boolean started = false;
                 for (String s : lines) {
-                    pw.println(s);
+                    if (!started) {
+                        pw.print(s);
+                        started = true;
+                    } else {
+                        pw.print("\n" + s);
+                    }
                 }
 
                 pw.close();
@@ -299,7 +326,7 @@ public class ServerThread implements Runnable {
 
             for (String s : lines) {
                 if (s.substring(0, s.indexOf(",")).equals(user)) {
-                    s = user + "," + newPass;
+                    lines.set(lines.indexOf(s), user + "," + newPass);
                 }
             }
 
@@ -307,8 +334,15 @@ public class ServerThread implements Runnable {
                 File f = new File(TEACHER_FILE);
                 FileOutputStream fos = new FileOutputStream(f, false);
                 PrintWriter pw = new PrintWriter(fos);
+
+                boolean started = false;
                 for (String s : lines) {
-                    pw.println(s);
+                    if (!started) {
+                        pw.print(s);
+                        started = true;
+                    } else {
+                        pw.print("\n" + s);
+                    }
                 }
 
                 pw.close();
@@ -342,7 +376,7 @@ public class ServerThread implements Runnable {
                 if (s.substring(0, s.indexOf(",")).equals(user)) {
                     String temp1 = s.substring(s.indexOf(",") + 1);
                     String temp2 = temp1.substring(temp1.indexOf(","));
-                    s = user + "," + newPass + temp2;
+                    lines.set(lines.indexOf(s), user + "," + newPass + temp2);
                 }
             }
 
@@ -350,8 +384,15 @@ public class ServerThread implements Runnable {
                 File f = new File(STUDENT_FILE);
                 FileOutputStream fos = new FileOutputStream(f, false);
                 PrintWriter pw = new PrintWriter(fos);
+
+                boolean started = false;
                 for (String s : lines) {
-                    pw.println(s);
+                    if (!started) {
+                        pw.print(s);
+                        started = true;
+                    } else {
+                        pw.print("\n" + s);
+                    }
                 }
 
                 pw.close();
@@ -393,8 +434,15 @@ public class ServerThread implements Runnable {
                 File f = new File(TEACHER_FILE);
                 FileOutputStream fos = new FileOutputStream(f, false);
                 PrintWriter pw = new PrintWriter(fos);
+
+                boolean started = false;
                 for (String s : lines) {
-                    pw.println(s);
+                    if (!started) {
+                        pw.print(s);
+                        started = true;
+                    } else {
+                        pw.print("\n" + s);
+                    }
                 }
 
                 pw.close();
@@ -508,7 +556,7 @@ public class ServerThread implements Runnable {
 
             for (String s : lines) {
                 if (s.equals(course + "," + teacher + "," + oldDiscussion)) {
-                    s = course + "," + teacher + "," + newDiscussion;
+                    lines.set(lines.indexOf(s), course + "," + teacher + "," + newDiscussion);
                 }
             }
 
@@ -644,7 +692,7 @@ public class ServerThread implements Runnable {
             for (String s : lines) {
                 if (s.substring(0, s.indexOf(",")).equals(user)) {
                     String temp = s.substring(s.indexOf("," + 1));
-                    s = user + "," + temp.substring(0, temp.indexOf(",") + 1) + grade;
+                    lines.set(lines.indexOf(s), user + "," + temp.substring(0, temp.indexOf(",") + 1) + grade);
                 }
             }
 
@@ -652,8 +700,15 @@ public class ServerThread implements Runnable {
                 File f = new File(STUDENT_FILE);
                 FileOutputStream fos = new FileOutputStream(f, false);
                 PrintWriter pw = new PrintWriter(fos);
+
+                boolean started = false;
                 for (String s : lines) {
-                    pw.println(s);
+                    if (!started) {
+                        pw.print(s);
+                        started = true;
+                    } else {
+                        pw.print("\n" + s);
+                    }
                 }
 
                 pw.close();
