@@ -23,6 +23,7 @@ public class CreationGUI extends JComponent implements Runnable {
     public JFrame frame;
     String userType;
     Socket socket;
+    ObjectInputStream ois;
 
     ArrayList<Course> courses;
 
@@ -31,12 +32,13 @@ public class CreationGUI extends JComponent implements Runnable {
     }
 
     public CreationGUI(ArrayList<Student> students, ArrayList<Teacher> teachers, ArrayList<Course> courses,
-                       String userType, Socket socket) {
+                       String userType, Socket socket, ObjectInputStream ois) {
         this.students = students;
         this.teachers = teachers;
         this.courses = courses;
         this.userType = userType;
         this.socket = socket;
+        this.ois = ois;
     }
 
     public static void main(String[] args) {
@@ -110,7 +112,7 @@ public class CreationGUI extends JComponent implements Runnable {
 
                         frame.dispose();
 
-                        Thread t = new Thread(new StudentGUI(students, courses, socket));
+                        Thread t = new Thread(new StudentGUI(students, courses, socket, ois));
                         t.start();
                     }
                 }

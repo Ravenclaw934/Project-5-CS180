@@ -35,17 +35,17 @@ public class Client {
             ArrayList<Course> courses = (ArrayList<Course>) ois.readObject();
 
             if (acctType.equals("Student")) {
-                StudentGUI studentGUI = new StudentGUI(students, courses, socket);
+                StudentGUI studentGUI = new StudentGUI(students, courses, socket, ois);
                 Thread t = new Thread(studentGUI);
                 t.start();
             } else if (acctType.equals("Teacher")) {
          //       TeacherGUI teacherGUI = new TeacherGUI(teachers, courses);
             } else if (acctType.equals("Create Teacher Account")){
-                CreationGUI creationGUI = new CreationGUI(students, teachers, courses, "T", socket);
+                CreationGUI creationGUI = new CreationGUI(students, teachers, courses, "T", socket, ois);
                 Thread t = new Thread(creationGUI);
                 t.start();
             } else {
-                CreationGUI creationGUI = new CreationGUI(students, teachers, courses, "S", socket);
+                CreationGUI creationGUI = new CreationGUI(students, teachers, courses, "S", socket, ois);
                 Thread t = new Thread(creationGUI);
                 t.start();
             }

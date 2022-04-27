@@ -77,6 +77,8 @@ public class ServerThread implements Runnable {
                     String newReply = reader.readLine();
 
                     addReply(course, poster, message, student, newReply);
+
+                    oos.writeObject(initializeCourses());
                 }
             }
 
