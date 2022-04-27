@@ -231,17 +231,6 @@ public class StudentGUI extends JComponent implements Runnable {
         frame.dispose();
         frame = new JFrame("Student Dashboard");
         content = frame.getContentPane();
-        courseButton = new JButton("See Course");
-        courseDropdown = new JComboBox<>(courseNames);
-        courseButton.addActionListener(actionListener);
-
-        accountButton = new JButton("Account");
-        accountButton.addActionListener(actionListener);
-
-        jpaneltop.add(refresh);
-        jpaneltop.add(courseDropdown);
-        jpaneltop.add(courseButton);
-        jpaneltop.add(accountButton);
 
         content.add(jpaneltop, BorderLayout.NORTH);
         JPanel discussionLayout = new JPanel();
@@ -296,17 +285,6 @@ public class StudentGUI extends JComponent implements Runnable {
 
         frame = new JFrame("New Reply");
         content = frame.getContentPane();
-        courseButton = new JButton("See Course");
-        courseDropdown = new JComboBox<>(courseNames);
-        courseButton.addActionListener(actionListener);
-
-        accountButton = new JButton("Account");
-        accountButton.addActionListener(actionListener);
-
-        jpaneltop.add(refresh);
-        jpaneltop.add(courseDropdown);
-        jpaneltop.add(courseButton);
-        jpaneltop.add(accountButton);
 
         content.add(jpaneltop, BorderLayout.NORTH);
         JPanel center = new JPanel();
@@ -353,17 +331,19 @@ public class StudentGUI extends JComponent implements Runnable {
                     writer.flush();
                     writer.println(newRep.getMessage());
                     writer.flush();
+                    System.out.println("356");
 
                     courseList = (ArrayList<Course>) ois.readObject();
 
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
+                System.out.println("362");
 
                 for (ActionListener a : confirm.getActionListeners()) {
                     confirm.removeActionListener(a);
                 }
-                System.out.println("Button pressed");
+                System.out.println("Back to discussion page");
 
                 displayDisc(current, content);
             }
@@ -386,18 +366,6 @@ public class StudentGUI extends JComponent implements Runnable {
         passwordText = new JLabel("Password: " + password);
         grade = new JLabel("Current Grade: " + student.getGrade());
 
-        jpaneltop = new JPanel();
-        courseButton = new JButton("See Course");
-        courseDropdown = new JComboBox<>(courseNames);
-        courseButton.addActionListener(actionListener);
-
-        accountButton = new JButton("Account");
-        accountButton.addActionListener(actionListener);
-
-        jpaneltop.add(refresh);
-        jpaneltop.add(courseDropdown);
-        jpaneltop.add(courseButton);
-        jpaneltop.add(accountButton);
 
         content.add(jpaneltop, BorderLayout.NORTH);
 
@@ -661,18 +629,7 @@ public class StudentGUI extends JComponent implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        jpaneltop = new JPanel();
-        courseButton = new JButton("See Course");
-        courseDropdown = new JComboBox<>(courseNames);
-        courseButton.addActionListener(actionListener);
 
-        accountButton = new JButton("Account");
-        accountButton.addActionListener(actionListener);
-
-        jpaneltop.add(refresh);
-        jpaneltop.add(courseDropdown);
-        jpaneltop.add(courseButton);
-        jpaneltop.add(accountButton);
 
         content.add(jpaneltop, BorderLayout.NORTH);
 
