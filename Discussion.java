@@ -31,14 +31,14 @@ public class Discussion implements Post, Serializable {
 	}
 
 	@Override
-	public String getMessage() throws ActionFailedException
+	public String getMessage()
 	{
 
 		return message;
 
 	}
 
-	public int getReplies() throws ActionFailedException
+	public int getReplies()
 	{
 		return replies.size();
 	}
@@ -64,8 +64,12 @@ public class Discussion implements Post, Serializable {
 	}
 
 	@Override
-	public User getPoster() throws ActionFailedException {
+	public User getPoster() {
 		return null;
+	}
+
+	public void setCourse(String course) {
+		this.course = course;
 	}
 
 }
