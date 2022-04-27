@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
@@ -20,10 +21,10 @@ import javax.swing.SwingUtilities;
  * A program makes creates a page GUI.
  *
  * <p>
- * Purdue University -- CS18000 -- Spring 2022 -- Project 5 -- StudentGUI
+ * Purdue University -- CS18000 -- Spring 2022 -- Project 5 -- TeacherGUI
  * </p>
  *
- * @author BrianGillis (bdgillis) Purdue CS
+ * @author Anthony Whittle (ajwhittl) Purdue CS
  * @version 1.0 April 12th, 2021
  */
 
@@ -31,6 +32,8 @@ public class TeacherGUI extends JComponent implements Runnable {
 	
     public String username;
     public String password;
+    
+    public Teacher user;
 	
 	
 	// General variables for the GUI
@@ -38,6 +41,7 @@ public class TeacherGUI extends JComponent implements Runnable {
     public ArrayList<Teacher> teachers = new ArrayList<Teacher>();
     public ArrayList<Course> courses = new ArrayList<Course>();
 	public ArrayList<Discussion> discussions = new ArrayList<Discussion>();
+	public ArrayList<JButton> buttons = new ArrayList<JButton>();
     
     // Login text fields, labels, and buttons
     public JTextField userText;
@@ -65,8 +69,6 @@ public class TeacherGUI extends JComponent implements Runnable {
     public JButton popularReply = new JButton("View Popular Reply");
     public JLabel gradeText = new JLabel("Grade a Student");
     public JButton gradeStudent = new JButton("Grade");
-    public JLabel editReplyText = new JLabel("Edit Student Reply Menu");
-    public JButton editPost = new JButton("Edit Reply");
     public JLabel importText = new JLabel("Import Discussion Text");
     public JButton importDiscussion = new JButton("Import");
     
@@ -105,6 +107,23 @@ public class TeacherGUI extends JComponent implements Runnable {
     public JButton refresh = new JButton("Refresh");
     
     public JButton confirm = new JButton("Confirm");
+    public JButton confirmUser = new JButton("Confirm");
+    public JButton confirmPass = new JButton("Confirm");
+    public JButton confirmReply = new JButton("Confirm");
+    public JButton confirmDiscussionReply = new JButton("Confirm");
+    public JButton confirmCreateDiscussion = new JButton("Confirm");
+    public JButton confirmDiscussionCreate = new JButton("Confirm");
+    public JButton confirmGradeStudentMenu = new JButton("Confirm");
+    public JButton confirmGradeFinal = new JButton("Confirm");
+    public JButton confirmDiscussionEdit = new JButton("Confirm");
+    public JButton confirmDiscussionEdit2 = new JButton("Confirm");
+    public JButton confirmDiscussionEdit3 = new JButton("Confirm");
+    
+
+    
+    JComboBox<String> courseDropdown;
+    JComboBox<String> discDropdown;
+    JComboBox<String> studentDropdown;
     
     JFrame frame;
     Container content;
@@ -120,6 +139,41 @@ public class TeacherGUI extends JComponent implements Runnable {
     	courses.add(history);
     	teachers = new ArrayList<Teacher>();
     	teachers.add(Jones);
+    	
+        buttons.add(confirm);
+    	buttons.add(refresh);
+    	buttons.add(confirmUser);
+    	buttons.add(confirmPass);
+    	buttons.add(confirmReply);
+    	buttons.add(confirmDiscussionReply);
+    	buttons.add(confirmCreateDiscussion);
+    	buttons.add(confirmDiscussionCreate);
+    	buttons.add(confirmGradeStudentMenu);
+    	buttons.add(confirmGradeFinal);
+    	buttons.add(confirmDiscussionEdit);
+    	buttons.add(confirmDiscussionEdit2);
+    	buttons.add(confirmDiscussionEdit3);
+    	buttons.add(createCourseButton);
+    	buttons.add(createDiscussionButton);
+    	buttons.add(createDiscussionButton);
+    	buttons.add(editDiscussionButton);
+    	buttons.add(deleteDiscussionButton);
+    	buttons.add(deleteAccount);
+    	buttons.add(goBack);
+    	buttons.add(editPassword);
+    	buttons.add(editUsername);
+    	buttons.add(enterButton);
+    	buttons.add(mainMenu);
+    	buttons.add(account);
+    	buttons.add(createCourse);
+    	buttons.add(createDiscussion);
+    	buttons.add(editDiscussion);
+    	buttons.add(deleteDiscussion);
+    	buttons.add(reply);
+    	buttons.add(popularReply);
+    	buttons.add(gradeStudent);
+    	buttons.add(importDiscussion);
+    	
     	
     }
 
@@ -147,6 +201,8 @@ public class TeacherGUI extends JComponent implements Runnable {
                             login = true;
                             username = teacher.getUsername();
                             password = teacher.getPassword();
+                            user = teacher;
+                	        removeListeners();
                             mainMenu();
                         }
                     }
@@ -238,8 +294,6 @@ public class TeacherGUI extends JComponent implements Runnable {
 		right.add(replyText);
 		right.add(reply);
 		right.add(popularReply);
-		right.add(editReplyText);
-		right.add(editPost);
 		
 		left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
 		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
@@ -257,7 +311,7 @@ public class TeacherGUI extends JComponent implements Runnable {
         account.addActionListener(new ActionListener() {
     	    public void actionPerformed(ActionEvent e) {
     	        
-    	    	
+    	        removeListeners();
     	        accountMenu();
     	        
     	    }
@@ -266,7 +320,7 @@ public class TeacherGUI extends JComponent implements Runnable {
         createCourse.addActionListener(new ActionListener() {
     	    public void actionPerformed(ActionEvent e) {
     	        
-    	    	
+    	        removeListeners();
     	        courseMenu();
     	        
     	    }
@@ -275,7 +329,7 @@ public class TeacherGUI extends JComponent implements Runnable {
         createDiscussion.addActionListener(new ActionListener() {
     	    public void actionPerformed(ActionEvent e) {
     	        
-    	    	
+    	        removeListeners();
     	        DiscussionMenu();
     	        
     	    }
@@ -284,8 +338,8 @@ public class TeacherGUI extends JComponent implements Runnable {
         editDiscussion.addActionListener(new ActionListener() {
     	    public void actionPerformed(ActionEvent e) {
     	        
-    	    	
-    	        EditDiscussionMenu();
+    	        removeListeners();
+    	        editDiscussionMenu();
     	        
     	    }
     	});
@@ -293,7 +347,7 @@ public class TeacherGUI extends JComponent implements Runnable {
         deleteDiscussion.addActionListener(new ActionListener() {
     	    public void actionPerformed(ActionEvent e) {
     	        
-    	    	
+    	        removeListeners();
     	        deleteDiscussionMenu();
     	        
     	    }
@@ -301,8 +355,8 @@ public class TeacherGUI extends JComponent implements Runnable {
         
         reply.addActionListener(new ActionListener() {
     	    public void actionPerformed(ActionEvent e) {
-    	        
-    	    	
+    	        removeListeners();
+    	    	replyMenu();
     	        
     	        
     	    }
@@ -310,7 +364,7 @@ public class TeacherGUI extends JComponent implements Runnable {
         
         popularReply.addActionListener(new ActionListener() {
     	    public void actionPerformed(ActionEvent e) {
-    	        
+    	        removeListeners();
     	    	
     	        
     	        
@@ -319,17 +373,8 @@ public class TeacherGUI extends JComponent implements Runnable {
         
         gradeStudent.addActionListener(new ActionListener() {
     	    public void actionPerformed(ActionEvent e) {
-    	        
-    	    	
-    	        
-    	        
-    	    }
-    	});
-        
-        editPost.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
-    	        
-    	    	
+    	        removeListeners();
+    	    	gradeMenu();
     	        
     	        
     	    }
@@ -337,7 +382,7 @@ public class TeacherGUI extends JComponent implements Runnable {
         
         importDiscussion.addActionListener(new ActionListener() {
     	    public void actionPerformed(ActionEvent e) {
-    	        
+    	        removeListeners();
     	    	
     	        
     	        
@@ -379,7 +424,7 @@ public class TeacherGUI extends JComponent implements Runnable {
         
         editUsername.addActionListener(new ActionListener() {
     	    public void actionPerformed(ActionEvent e) {
-    	        
+    	        removeListeners();
     	    	changeUsername();
     	        
     	        
@@ -388,7 +433,7 @@ public class TeacherGUI extends JComponent implements Runnable {
         
         editPassword.addActionListener(new ActionListener() {
     	    public void actionPerformed(ActionEvent e) {
-    	        
+    	        removeListeners();
     	    	changePassword();
     	        
     	        
@@ -408,7 +453,7 @@ public class TeacherGUI extends JComponent implements Runnable {
     	    		}
     	    	}
     	    	
-    	    	
+    	        removeListeners();
     	    	run();
     	        
     	        
@@ -417,7 +462,7 @@ public class TeacherGUI extends JComponent implements Runnable {
 
 		goBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+    	        removeListeners();
 				mainMenu();
 
 
@@ -447,7 +492,7 @@ public class TeacherGUI extends JComponent implements Runnable {
 		userText.setText("");
 	
 		
-		confirm.addActionListener(new ActionListener() {
+		confirmUser.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		        
 		    	username = userText.getText();
@@ -464,7 +509,7 @@ public class TeacherGUI extends JComponent implements Runnable {
 						}
 					}
 				}
-				
+    	        removeListeners();
 				accountMenu();
 		        
 		        
@@ -501,7 +546,7 @@ public class TeacherGUI extends JComponent implements Runnable {
 		passText.setText("");
 	
 		
-		confirm.addActionListener(new ActionListener() {
+		confirmPass.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		        
 		    	password = passText.getText();
@@ -510,16 +555,10 @@ public class TeacherGUI extends JComponent implements Runnable {
 				{
 					if(teachers.get(i).getPassword().equals(oldPassword))
 					{
-						try {
-							teachers.get(i).setPassword(password);
-						} catch (PasswordLimiterException ex) {
-							JOptionPane.showInternalMessageDialog(null, "Password is already in use!", "Action Failed",
-									JOptionPane.ERROR_MESSAGE);
-						}
-
+						teachers.get(i).setPassword(password);
 					}
 				}
-				
+    	        removeListeners();
 				accountMenu();
 
 
@@ -559,7 +598,7 @@ public class TeacherGUI extends JComponent implements Runnable {
 
 		createCourseButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+    	        removeListeners();
 				createCourse();
 
 			}
@@ -567,7 +606,7 @@ public class TeacherGUI extends JComponent implements Runnable {
 
 		goBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+    	        removeListeners();
 				mainMenu();
 
 			}
@@ -601,7 +640,7 @@ public class TeacherGUI extends JComponent implements Runnable {
 				Course course = new Course(passText.getText());
 
 				courses.add(course);
-
+    	        removeListeners();
 				courseMenu();
 
 
@@ -642,7 +681,7 @@ public class TeacherGUI extends JComponent implements Runnable {
 
 		createDiscussionButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+    	        removeListeners();
 				createDiscussion();
 
 			}
@@ -650,7 +689,7 @@ public class TeacherGUI extends JComponent implements Runnable {
 
 		goBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+    	        removeListeners();
 				mainMenu();
 
 			}
@@ -658,6 +697,107 @@ public class TeacherGUI extends JComponent implements Runnable {
 
 
 	}
+	
+	public void gradeMenu()
+	{
+		
+		frame.dispose();
+		
+		frame = new JFrame("Grade Student");
+		content = frame.getContentPane();
+		
+		JPanel center = new JPanel();
+		
+		
+		String[] names = new String[students.size()];
+		
+		
+		for(int i = 0; i < students.size(); i++)
+		{
+			names[i] = students.get(i).getUsername();
+			
+		}
+		
+		studentDropdown = new JComboBox<String>(names);
+		
+		center.add(studentDropdown);
+		center.add(confirmGradeStudentMenu);
+		
+		confirmGradeStudentMenu.addActionListener(new ActionListener() {
+    	    public void actionPerformed(ActionEvent e) {
+    	        
+    	    	
+    	        for(int i = 0; i < students.size(); i++)
+    	        {
+    	        	if(students.get(i).getUsername().equals(studentDropdown.getSelectedItem()))
+    	        	{
+    	    	        removeListeners();
+    	        		gradeStudent(students.get(i));
+    	        	}
+    	        }
+    	        
+    	    }
+    	});
+		
+		content.add(center);
+
+		frame.setSize(600, 400);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+		
+		
+	}
+	
+	
+	public void gradeStudent(Student user)
+	{
+		frame.dispose();
+		
+		frame = new JFrame("Student Grading");
+		content = frame.getContentPane();
+		
+		JPanel center = new JPanel();
+		
+		center.add(new JLabel(user.getUsername()));
+		
+		String[] options = {"1", "2", "3", "4", "5"};
+		
+		JComboBox<String> grades = new JComboBox<String>(options);
+		
+		center.add(grades);
+		
+		center.add(confirmGradeFinal);
+		
+		confirmGradeFinal.addActionListener(new ActionListener() {
+    	    public void actionPerformed(ActionEvent e) {
+    	        
+    	    	
+    	        for(int i = 0; i < students.size(); i++)
+    	        {
+    	        	if(students.get(i).equals(user))
+    	        	{
+    	        		students.get(i).setGrade(Integer.parseInt(grades.getItemAt(grades.getSelectedIndex())));
+    	    	        removeListeners();
+    	        		mainMenu();
+    	        	}
+    	        }
+    	        
+    	        
+    	    }
+    	});
+		
+		content.add(center);
+
+		frame.setSize(600, 400);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+		
+	}
+	
+	
+	
 
 	public void createDiscussion(){
 
@@ -665,117 +805,224 @@ public class TeacherGUI extends JComponent implements Runnable {
 
 		frame = new JFrame("Create Discussion");
 		content = frame.getContentPane();
-
+		
 		JPanel center = new JPanel();
-
-		center.add(discPrompt);
-		center.add(passText);
-		center.add(confirm);
-
-		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+		
+		String[] names = new String[courses.size()];
+		
+		for(int i = 0; i < courses.size(); i++)
+		{
+			names[i] = courses.get(i).getCourseName();
+		}
+		
+		courseDropdown = new JComboBox<String>(names);
+		
+		center.add(courseDropdown);
+		center.add(confirmCreateDiscussion);
+		
 		content.add(center);
-
-
-		passText.setText("");
-
-
-		confirm.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				Discussion disc = new Discussion(passText.getText());
-
-				discussions.add(disc);
-
-				DiscussionMenu();
-
-
-			}
-		});
-
+		
+        confirmCreateDiscussion.addActionListener(new ActionListener() {
+    	    public void actionPerformed(ActionEvent e) {
+    	        
+    	        removeListeners();
+    	        discussionCreator(courseDropdown.getItemAt(courseDropdown.getSelectedIndex()));
+    	        
+    	    }
+    	});
+		
 		frame.setSize(600, 400);
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 
 	}
+	
+	public void discussionCreator(String course)
+	{
+		frame.dispose();
 
-	public void EditDiscussionMenu(){
+		frame = new JFrame("Discussion Creator");
+		content = frame.getContentPane();
+		
+		JPanel center = new JPanel();
+		
+		center.add(new JLabel(course));
+		
+		passText.setText("");
+		
+		center.add(passText);
+		
+		center.add(confirmDiscussionCreate);
+		
+		content.add(center);
+		
+        confirmDiscussionCreate.addActionListener(new ActionListener() {
+    	    public void actionPerformed(ActionEvent e) {
+    	        
+    	    	
+    	        String message = passText.getText();
+    	        
+    	        for(int i = 0; i < courses.size(); i++)
+    	        {
+    	        	if(courses.get(i).getCourseName().equals(course))
+    	        	{
+    	        		courses.get(i).forum.add(new Discussion(message));
+    	        		System.out.println(courses.get(i).forum.get(0).getMessage());
+    	    	        removeListeners();
+    	        		mainMenu();
+    	        	}
+    	        }
+    	        
+    	    }
+    	});
+		
+		frame.setSize(600, 400);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+	}
+
+	public void editDiscussionMenu(){
 
 		frame.dispose();
 
 		frame = new JFrame("Edit Discussion");
 		content = frame.getContentPane();
-
-		JLabel discList = new JLabel("You currently have " + discussions.size() + " discussions.");
+		
 		JPanel center = new JPanel();
-
-		center.add(discList);
-		center.add(editNewDisc);
-		center.add(editDiscussionButton);
-		center.add(backText);
-		center.add(goBack);
-
-		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+		
+		String[] names = new String[courses.size()];
+		
+		for(int i = 0; i < courses.size(); i++)
+		{
+			names[i] = courses.get(i).getCourseName();
+		}
+		
+		courseDropdown = new JComboBox<String>(names);
+		
+		center.add(courseDropdown);
+		center.add(confirmDiscussionEdit);
+		
 		content.add(center);
-
+		
+        confirmDiscussionEdit.addActionListener(new ActionListener() {
+    	    public void actionPerformed(ActionEvent e) {
+    	        
+    	        removeListeners();
+    	        editDiscussionOne(courseDropdown.getItemAt(courseDropdown.getSelectedIndex()));
+    	        
+    	    }
+    	});
+		
 		frame.setSize(600, 400);
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 
-		editDiscussionButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				editDiscussion();
-
-			}
-		});
-
-		goBack.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				mainMenu();
-
-			}
-		});
-
 
 	}
+	
+	public void editDiscussionOne(String course)
+	{
+		
+		frame.dispose();
+		
+		frame = new JFrame("Edit Discussion");
+		
+		content = frame.getContentPane();
+		
+		JPanel center = new JPanel();
+		
+		center.add(new JLabel(course));
 
-	public void editDiscussion() {
+		Course place = null;
+		
+		for(int i = 0; i < courses.size(); i++)
+		{
+			if(courses.get(i).getCourseName().equals(course))
+			{
+				place = courses.get(i);
+			}
+		}
+		
+		String[] names = new String[place.getForum().size()];
+		
+		for(int i = 0; i < place.getForum().size(); i++)
+		{
+			names[i] = place.getForum().get(i).getMessage();
+		}
+		
+		discDropdown = new JComboBox<String>(names);
+		
+		center.add(discDropdown);
+		center.add(confirmDiscussionEdit2);
+		
+		
+		confirmDiscussionEdit2.addActionListener(new ActionListener() {
+    	    public void actionPerformed(ActionEvent e) {
+    	        
+    	        removeListeners();
+    	        editDiscussion(course, discDropdown.getItemAt(discDropdown.getSelectedIndex()));
+    	        
+    	    }
+    	});
+		
+		content.add(center);
+		frame.setSize(600, 400);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+		
+	}
+
+	public void editDiscussion(String course, String discussion) {
 
 		frame.dispose();
 
-		frame = new JFrame("Edit Discussion");
+		frame = new JFrame("Discussion Creator");
 		content = frame.getContentPane();
-
+		
 		JPanel center = new JPanel();
-
-		center.add(editDiscPrompt);
-		center.add(userText);
-		center.add(changeText);
-		center.add(passText);
-		center.add(confirm);
-
-		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
-		content.add(center);
-
-
+		
+		center.add(new JLabel(course));
+		
 		passText.setText("");
-
-
-		confirm.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				int discNum = Integer.parseInt(userText.getText());
-
-				Discussion discussion = new Discussion(passText.getText());
-
-				discussions.set(discNum, discussion);
-
-			}
-		});
-
+		
+		center.add(passText);
+		
+		center.add(confirmDiscussionEdit3);
+		
+		content.add(center);
+		
+		int index = 0;
+		
+        confirmDiscussionEdit3.addActionListener(new ActionListener() {
+    	    public void actionPerformed(ActionEvent e) {
+    	        
+    	    	
+    	        String message = passText.getText();
+    	        
+    	        for(int i = 0; i < courses.size(); i++)
+    	        {
+    	        	if(courses.get(i).getCourseName().equals(course))
+    	        	{
+    	        		for(int j = 0; j < courses.get(i).getForum().size(); j++)
+    	        		{
+    	        			if(courses.get(i).getForum().get(j).getMessage().equals(discussion))
+    	        			{
+    	        				courses.get(i).getForum().set(j, new Discussion(message));
+    	        				System.out.println(courses.get(i).getForum().get(j).getMessage());
+    	            	        removeListeners();
+    	        				mainMenu();
+    	        			}
+    	        		}
+    	        	}
+    	        }
+    	        
+    	    }
+    	});
+		
 		frame.setSize(600, 400);
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -810,6 +1057,7 @@ public class TeacherGUI extends JComponent implements Runnable {
 		deleteDiscussionButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
+    	        removeListeners();
 				deleteDiscussion();
 
 			}
@@ -818,7 +1066,9 @@ public class TeacherGUI extends JComponent implements Runnable {
 		goBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
+    	        removeListeners();
 				mainMenu();
+				
 
 			}
 		});
@@ -853,6 +1103,8 @@ public class TeacherGUI extends JComponent implements Runnable {
 
 
 				discussions.remove(discNum);
+    	        removeListeners();
+    	        mainMenu();
 
 			}
 		});
@@ -862,5 +1114,209 @@ public class TeacherGUI extends JComponent implements Runnable {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 
+	}
+	
+	public void replyMenu()
+	{
+		
+		frame.dispose();
+
+		frame = new JFrame("Reply Menu");
+		content = frame.getContentPane();
+		
+		JPanel center = new JPanel();
+		
+		String[] names = new String[courses.size()];
+		
+		for(int i = 0; i < courses.size(); i++)
+		{
+			names[i] = courses.get(i).getCourseName();
+		}
+		
+		courseDropdown = new JComboBox<String>(names);
+		
+		center.add(courseDropdown);
+		center.add(confirmReply);
+		
+
+		
+		content.add(center);
+		
+        confirmReply.addActionListener(new ActionListener() {
+    	    public void actionPerformed(ActionEvent e) {
+    	        
+    	        removeListeners();
+    	        replyPicker(courseDropdown.getItemAt(courseDropdown.getSelectedIndex()));
+
+    	        
+    	    }
+    	});
+		
+		frame.setSize(600, 400);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+		
+	}
+	
+	public void replyPicker(String course)
+	{
+		
+		System.out.println("I'm running");
+		
+		frame.dispose();
+
+		frame = new JFrame("Reply Menu");
+		content = frame.getContentPane();
+		
+		JPanel center = new JPanel();
+		
+		Course discussions = null;
+		
+		for(int i = 0; i < courses.size(); i++)
+		{
+			if(courses.get(i).getCourseName().equals(course))
+			{
+				discussions = courses.get(i);
+			}
+		}
+		
+		final Course discussion = discussions;
+		
+		if(discussions != null)
+		{
+
+			System.out.println("This is running too");
+			String[] list = new String[discussions.getForum().size()];
+		
+			for(int i = 0; i < list.length; i++)
+			{
+				list[i] = discussions.getForum().get(i).getMessage();
+			}
+			
+			discDropdown = new JComboBox<String>(list);
+		}
+		center.add(new JLabel(course));
+		center.add(discDropdown);
+		center.add(confirmDiscussionReply);
+		
+		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+		
+		
+		confirmDiscussionReply.addActionListener(new ActionListener() {
+    	    public void actionPerformed(ActionEvent e) {
+
+    	        removeListeners();
+    	        createReply(discussion, discussion.getForum().get(discDropdown.getSelectedIndex()));
+    	        
+    	    }
+    	});
+		
+		content.add(center);
+
+		frame.setSize(600, 400);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+		
+		
+		
+	}
+	
+	public void createReply(Course courses, Discussion discussion)
+	{
+		
+		System.out.println("I'm running");
+		
+		frame.dispose();
+
+		frame = new JFrame("Reply Menu");
+		content = frame.getContentPane();
+		
+		JPanel center = new JPanel();
+		
+		passText.setText("");
+		
+		center.add(passText);
+		center.add(confirm);
+		
+		confirm.addActionListener(new ActionListener() {
+    	    public void actionPerformed(ActionEvent e) {
+
+    	        removeListeners();
+    	        courses.getForum().get(courses.getForum().indexOf(discussion)).getReplyArray().add(new Reply(user, passText.getText()));
+    	        mainMenu();
+    	        
+    	    }
+    	});
+		
+	}
+	
+	
+	public void popularReplyCourse()
+	{
+		
+		frame.dispose();
+
+		frame = new JFrame("Reply Menu");
+		content = frame.getContentPane();
+		
+		JPanel center = new JPanel();
+		
+		String[] names = new String[courses.size()];
+		
+		for(int i = 0; i < courses.size(); i++)
+		{
+			names[i] = courses.get(i).getCourseName();
+		}
+		
+		courseDropdown = new JComboBox<String>(names);
+		
+		center.add(courseDropdown);
+		center.add(confirmReply);
+		
+
+		
+		content.add(center);
+		
+        confirmReply.addActionListener(new ActionListener() {
+    	    public void actionPerformed(ActionEvent e) {
+    	        
+    	        removeListeners();
+    	        popularReplyDiscussion(courseDropdown.getItemAt(courseDropdown.getSelectedIndex()));
+
+    	        
+    	    }
+    	});
+		
+		frame.setSize(600, 400);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+	}
+	
+	public void popularReplyDiscussion(String course)
+	{
+		
+	}
+	
+	
+	
+	
+	
+	public void removeListeners()
+	{
+		for(int i = 0; i < buttons.size(); i++)
+		{
+			try {
+				if(buttons.get(i).getActionListeners().length > 0)
+				{
+					buttons.get(i).removeActionListener(buttons.get(i).getActionListeners()[0]);
+				}
+			} catch (NullPointerException e)
+			{
+				
+			}
+		}
 	}
 }
