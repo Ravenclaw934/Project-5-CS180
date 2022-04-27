@@ -40,6 +40,23 @@ public class ServerThread implements Runnable {
                     oos.writeObject(courses);
                     oos.flush();
                 }
+                if (request.equals("New Teacher")) {
+                    String newUser = reader.readLine();
+                    String newPass = reader.readLine();
+
+                    addTeacher(newUser, newPass);
+                }
+                if (request.equals("New Student")) {
+                    String newUser = reader.readLine();
+                    String newPass = reader.readLine();
+
+                    addStudent(newUser, newPass);
+                }
+                if (request.equals("Delete Student")) {
+                    String user = reader.readLine();
+
+                    deleteStudent(user);
+                }
             }
 
         } catch (Exception e) {
@@ -83,7 +100,7 @@ public class ServerThread implements Runnable {
                     String discName = temp.substring(temp.indexOf(",") + 1);
 
                     ArrayList<Discussion> tempDiscs = new ArrayList<>();
-                    tempDiscs.add(new Discussion(new Teacher(teacherName, ""), discName));
+                    tempDiscs.add(new Discussion(discName));
                     tempCourse = new Course(courseName, new Teacher(teacherName, ""), tempDiscs);
                     counter++;
                 } else {
@@ -141,7 +158,8 @@ public class ServerThread implements Runnable {
                 File f = new File(TEACHER_FILE);
                 FileOutputStream fos = new FileOutputStream(f, true);
                 PrintWriter pw = new PrintWriter(fos);
-                pw.println(user + "," + pass);
+                pw.println();
+                pw.print(user + "," + pass);
 
                 pw.close();
             } catch (IOException e) {
@@ -156,7 +174,8 @@ public class ServerThread implements Runnable {
                 File f = new File(STUDENT_FILE);
                 FileOutputStream fos = new FileOutputStream(f, true);
                 PrintWriter pw = new PrintWriter(fos);
-                pw.println(user + "," + pass);
+                pw.println();
+                pw.print(user + "," + pass + "," + "0");
 
                 pw.close();
             } catch (IOException e) {
@@ -408,8 +427,15 @@ public class ServerThread implements Runnable {
                 File f = new File(STUDENT_FILE);
                 FileOutputStream fos = new FileOutputStream(f, false);
                 PrintWriter pw = new PrintWriter(fos);
+
+                boolean started = false;
                 for (String s : lines) {
-                    pw.println(s);
+                    if (!started) {
+                        pw.print(s);
+                        started = true;
+                    } else {
+                        pw.print("\n" + s);
+                    }
                 }
 
                 pw.close();
@@ -719,7 +745,7 @@ public class ServerThread implements Runnable {
             }
         }
     }
-    
+
     //both Arraylists for importing should come from scanning all the lines of the file
     //into an Arraylist
 

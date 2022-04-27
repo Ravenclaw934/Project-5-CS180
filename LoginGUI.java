@@ -52,7 +52,7 @@ public class LoginGUI extends JComponent implements Runnable {
                         usernameExists = true;
                         if (passText.getText().equals(student.getPassword())) {
                             login = true;
-                            StudentGUI studentPage = new StudentGUI(students, teachers);
+                            StudentGUI studentPage = new StudentGUI(student, courses);
                             Thread t = new Thread(studentPage);
                             t.start();
                             frame.dispose();

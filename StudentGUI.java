@@ -1,6 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.ArrayList;
 
 /**
@@ -44,6 +47,8 @@ public class StudentGUI extends JComponent implements Runnable {
     public Discussion testDisc2;
     public Course testCourse;
 
+    Socket socket;
+
     //Account page
     public JLabel usernameText = new JLabel("Username: ");
     public JButton editUsername = new JButton("Change Username");
@@ -61,22 +66,7 @@ public class StudentGUI extends JComponent implements Runnable {
 
 
     public StudentGUI() {
-        students = new ArrayList<Student>();
-        students.add(student);
-        testReps.add(testRep);
-        testDisc = new Discussion("Test message", testReps);
-        testDisc2 = new Discussion("Test message 2", testReps);
-        testDiscs.add(testDisc);
-        testDiscs.add(testDisc2);
-        testCourse = new Course("CS 180", Jones, testDiscs );
-        courseList = new ArrayList<Course>();
-        courseList.add(testCourse);
-        teachers = new ArrayList<Teacher>();
-        teachers.add(Jones);
-        courseNames = new String[courseList.size()];
-        for (int i = 0; i < courseList.size(); i++) {
-            courseNames[i] = courseList.get(i).getCourseName();
-        }
+
     }
 
     public JButton discussionButton; // a button to view discussions
@@ -102,6 +92,7 @@ public class StudentGUI extends JComponent implements Runnable {
             }
             if (e.getSource() == courseButton) {
                 String selectCourseName = courseDropdown.getItemAt(courseDropdown.getSelectedIndex());
+
                 for (int i = 0; i < courseList.size(); i++) {
                     if (selectCourseName.equals(courseList.get(i).getCourseName())) {
                         currentCourse = courseList.get(i);
@@ -152,9 +143,14 @@ public class StudentGUI extends JComponent implements Runnable {
         this.courseList = courses;
     }
 
-    public StudentGUI(ArrayList<Student> students, ArrayList<Course> courses) {
+    public StudentGUI(ArrayList<Student> students, ArrayList<Course> courses, Socket socket) {
         this.students = students;
         this.courseList = courses;
+        this.socket = socket;
+        courseNames = new String[courseList.size()];
+        for (int i = 0; i < courseList.size(); i++) {
+            courseNames[i] = courseList.get(i).getCourseName();
+        }
     }
 
     public void checkLogin() {
@@ -162,15 +158,14 @@ public class StudentGUI extends JComponent implements Runnable {
         boolean login = false;
 
         for (Student stud : students) {
-            if (userText.getText().equals(student.getUsername())) {
+            if (userText.getText().equals(stud.getUsername())) {
                 usernameExists = true;
-                if (passText.getText().equals(student.getPassword())) {
+                if (passText.getText().equals(stud.getPassword())) {
                     login = true;
                     this.student = stud;
                     username = stud.getUsername();
                     password = stud.getPassword();
                     mainPageDisplay();
-                    System.out.println("LOGGED IN LFGGGGGG ");
                 }
             }
         }
@@ -340,6 +335,9 @@ public class StudentGUI extends JComponent implements Runnable {
 
                 changeUsername();
 
+                for (ActionListener a : editUsername.getActionListeners()) {
+                    editUsername.removeActionListener(a);
+                }
 
             }
         });
@@ -361,6 +359,16 @@ public class StudentGUI extends JComponent implements Runnable {
                 {
                     if(students.get(i).getUsername().equals(username))
                     {
+                        try {
+                            PrintWriter writer = new PrintWriter(socket.getOutputStream());
+                            writer.println("Delete Student");
+                            writer.flush();
+                            writer.println(students.get(i).getUsername());
+                            writer.flush();
+
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
                         students.remove(i);
                     }
                 }
@@ -393,27 +401,34 @@ public class StudentGUI extends JComponent implements Runnable {
 
         userText.setText("");
 
-
         confirm.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
-                username = userText.getText();
-
-                for (int i = 0; i < students.size(); i++) {
-                    if (students.get(i).getUsername().equals(oldUsername)) {
-                        try {
-                            students.get(i).setUsername(username);
-                        } catch (AccountExistsException e1) {
-                            JOptionPane.showInternalMessageDialog(null, "Username is already in use!", "Action Failed",
-                                    JOptionPane.ERROR_MESSAGE);
+                try {
+                    for (Student s : students) {
+                        if (s.getUsername().equals(userText.getText())) {
+                            throw new AccountExistsException("");
                         }
                     }
+
+                    for (int i = 0; i < students.size(); i++) {
+                        if (students.get(i).getUsername().equals(oldUsername)) {
+                            username = userText.getText();
+                            students.get(i).setUsername(username);
+                        }
+                    }
+                } catch (AccountExistsException e1) {
+                    JOptionPane.showInternalMessageDialog(null, "Username is already in use!", "Action Failed",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+
+                for (ActionListener a : confirm.getActionListeners()) {
+                    confirm.removeActionListener(a);
                 }
 
                 mainPageDisplay();
             }
         });
-
 
         frame.setSize(600, 400);
         frame.setLocationRelativeTo(null);
@@ -476,6 +491,7 @@ public class StudentGUI extends JComponent implements Runnable {
         discChoice.setLayout(new BoxLayout(discChoice, BoxLayout.Y_AXIS));
 
         ArrayList<Discussion> forum = course.getForum();
+
         String[] discNames = new String[forum.size()];
 
         try {
@@ -483,8 +499,15 @@ public class StudentGUI extends JComponent implements Runnable {
                 discNames[i] = (forum.get(i).getMessage());
             }
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
+
+        if (!(discDropdown == null)) {
+            content.remove(discChoice);
+
+            System.out.println("deleting");
+        }
+
         discDropdown = new JComboBox<>(discNames);
         viewReplyButton = new JButton("See Replies");
         viewReplyButton.addActionListener(actionListener);
@@ -495,7 +518,7 @@ public class StudentGUI extends JComponent implements Runnable {
             con.add(BorderLayout.CENTER, discChoice);
             con.revalidate(); // invokes layout manager
             con.repaint();
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             System.out.println("Null");
             e.printStackTrace();
         }
