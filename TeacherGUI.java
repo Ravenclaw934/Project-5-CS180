@@ -1297,10 +1297,112 @@ public class TeacherGUI extends JComponent implements Runnable {
 	
 	public void popularReplyDiscussion(String course)
 	{
+		System.out.println("I'm running");
 		
+		frame.dispose();
+
+		frame = new JFrame("Reply Menu");
+		content = frame.getContentPane();
+		
+		JPanel center = new JPanel();
+		
+		Course discussions = null;
+		
+		for(int i = 0; i < courses.size(); i++)
+		{
+			if(courses.get(i).getCourseName().equals(course))
+			{
+				discussions = courses.get(i);
+			}
+		}
+		
+		final Course discussion = discussions;
+		
+		if(discussions != null)
+		{
+
+			System.out.println("This is running too");
+			String[] list = new String[discussions.getForum().size()];
+		
+			for(int i = 0; i < list.length; i++)
+			{
+				list[i] = discussions.getForum().get(i).getMessage();
+			}
+			
+			discDropdown = new JComboBox<String>(list);
+		}
+		center.add(new JLabel(course));
+		center.add(discDropdown);
+		center.add(confirmDiscussionReply);
+		
+		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+		
+		
+		confirmDiscussionReply.addActionListener(new ActionListener() {
+    	    public void actionPerformed(ActionEvent e) {
+
+    	        removeListeners();
+    	        popularReply(discussion, discussion.getForum().get(discDropdown.getSelectedIndex()));
+    	        
+    	    }
+    	});
+		
+		content.add(center);
+
+		frame.setSize(600, 400);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
 	}
 	
-	
+	public void popularReply(Course discussion, Discussion forum)
+	{
+		frame.dispose();
+
+		frame = new JFrame("Reply Menu");
+		content = frame.getContentPane();
+		
+		JPanel center = new JPanel();
+		
+		
+		if(discussion.getForum().get(discussion.getForum().indexOf(forum)).getReplyArray().size() <= 0)
+		{
+			JOptionPane.showInternalMessageDialog(null, "Discussion has no replies", "Action Failed",
+                    JOptionPane.ERROR_MESSAGE);
+		} else
+		{
+			Reply reply = discussion.getForum().get(discussion.getForum().indexOf(forum)).getReplyArray().get(0);
+			
+			for(int i = 0; i < discussion.getForum().get(discussion.getForum().indexOf(forum)).getReplyArray().size(); i++)
+			{
+				if(reply.getVotes() < discussion.getForum().get(discussion.getForum().indexOf(forum)).getReplyArray().get(i).getVotes())
+				{
+					reply = discussion.getForum().get(discussion.getForum().indexOf(forum)).getReplyArray().get(i);
+				}
+			}
+			
+			center.add(new JLabel(reply.message));
+		}
+		
+		center.add(goBack);
+
+		
+		goBack.addActionListener(new ActionListener() {
+    	    public void actionPerformed(ActionEvent e) {
+
+    	        removeListeners();
+    	        mainMenu();
+    	        
+    	    }
+    	});
+		
+		content.add(center);
+
+		frame.setSize(600, 400);
+		frame.setLocationRelativeTo(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+	}
 	
 	
 	
