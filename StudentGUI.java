@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
@@ -66,6 +67,7 @@ public class StudentGUI extends JComponent implements Runnable {
 
     // Discussion page
     public JFileChooser fileImport;
+    public JButton fileReply = new JButton("Upload reply text file");
     public JButton addReply = new JButton("Add Reply");
     public JTextField newReplyText;
 
@@ -133,7 +135,7 @@ public class StudentGUI extends JComponent implements Runnable {
                 }
             }
             if (e.getSource() == fileImport) {
-
+                fileSelect();
             }
         }
     };
@@ -204,7 +206,7 @@ public class StudentGUI extends JComponent implements Runnable {
         content.add(page, BorderLayout.CENTER);
         currentBack = Color.white;
 
-        JPanel jpaneltop = new JPanel();
+        jpaneltop = new JPanel();
 
         courseButton = new JButton("See Course");
         courseDropdown = new JComboBox<>(courseNames);
@@ -229,48 +231,64 @@ public class StudentGUI extends JComponent implements Runnable {
         frame.dispose();
         frame = new JFrame("Student Dashboard");
         content = frame.getContentPane();
+        courseButton = new JButton("See Course");
+        courseDropdown = new JComboBox<>(courseNames);
+        courseButton.addActionListener(actionListener);
+
+        accountButton = new JButton("Account");
+        accountButton.addActionListener(actionListener);
+
+        jpaneltop.add(refresh);
+        jpaneltop.add(courseDropdown);
+        jpaneltop.add(courseButton);
+        jpaneltop.add(accountButton);
+
+        content.add(jpaneltop, BorderLayout.NORTH);
         JPanel discussionLayout = new JPanel();
+        JPanel replyOptions = new JPanel();
         discussionLayout.setLayout(new BoxLayout(discussionLayout, BoxLayout.Y_AXIS));
-
-        try {
-            JLabel discussPrompt = new JLabel(discussion.getMessage());
-
-            Reply[] replies = new Reply[discussion.getReplies()];
-            String allReplies = "";
-            for (int i = 0; i < discussion.getReplies(); i++) {
-                replies[i] = discussion.getReplyArray().get(i);
-                allReplies += "<html>" + replies[i].getPoster().getUsername() + ": " + replies[i].getMessage() + "<br>";
-            }
-            allReplies += "</html>";
-
-            replyDisp = new JLabel(allReplies);
-            addReply = new JButton("Write Reply");
-            addReply.addActionListener(actionListener);
-
-            discussionLayout.add(discussPrompt);
-            discussionLayout.add(replyDisp);
-            discussionLayout.add(addReply);
-            content.add(discussionLayout, BorderLayout.CENTER);
-            frame.setSize(600, 400);
-            frame.setLocationRelativeTo(null);
-            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            frame.setVisible(true);
+        replyOptions.setLayout(new BoxLayout(replyOptions, BoxLayout.Y_AXIS));
 
 
-            addReply.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    newReplyFrame(discussion);
-                }
-            });
+        JLabel discussPrompt = new JLabel(discussion.getMessage());
 
-        } catch (ActionFailedException e) {
-            e.printStackTrace();
+        Reply[] replies = new Reply[discussion.getReplies()];
+        String allReplies = "";
+        for (int i = 0; i < discussion.getReplies(); i++) {
+            replies[i] = discussion.getReplyArray().get(i);
+            allReplies += "<html>" + replies[i].getPoster().getUsername() + ": " + replies[i].getMessage() + "<br>";
         }
+        allReplies += "</html>";
+
+        replyDisp = new JLabel(allReplies);
+        addReply = new JButton("Write Reply");
+        addReply.addActionListener(actionListener);
+
+
+        discussionLayout.add(discussPrompt);
+        discussionLayout.add(replyDisp);
+        replyOptions.add(addReply);
+        replyOptions.add(fileReply);
+        content.add(discussionLayout, BorderLayout.CENTER);
+        content.add(replyOptions, BorderLayout.EAST);
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setVisible(true);
+
+
+        addReply.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                newReplyFrame(discussion);
+            }
+        });
+
     }
 
     public void fileSelect() {
         fileImport = new JFileChooser();
         fileImport.setDialogTitle("Pick Reply File");
+        File file = fileImport.getSelectedFile();
     }
 
     public void newReplyFrame(Discussion current) {
@@ -278,6 +296,19 @@ public class StudentGUI extends JComponent implements Runnable {
 
         frame = new JFrame("New Reply");
         content = frame.getContentPane();
+        courseButton = new JButton("See Course");
+        courseDropdown = new JComboBox<>(courseNames);
+        courseButton.addActionListener(actionListener);
+
+        accountButton = new JButton("Account");
+        accountButton.addActionListener(actionListener);
+
+        jpaneltop.add(refresh);
+        jpaneltop.add(courseDropdown);
+        jpaneltop.add(courseButton);
+        jpaneltop.add(accountButton);
+
+        content.add(jpaneltop, BorderLayout.NORTH);
         JPanel center = new JPanel();
         JLabel replyPrompt = new JLabel("Write your reply");
 
@@ -302,8 +333,10 @@ public class StudentGUI extends JComponent implements Runnable {
 
                 try {
                     for (Course c : courseList) {
-                        if (c.getForum().contains(current)) {
-                            current.setCourse(c.getCourseName());
+                        for (Discussion d : c.getForum()) {
+                            if (d.getMessage().equals(current.message)) {
+                                current.setCourse(c.getCourseName());
+                            }
                         }
                     }
 
@@ -330,6 +363,7 @@ public class StudentGUI extends JComponent implements Runnable {
                 for (ActionListener a : confirm.getActionListeners()) {
                     confirm.removeActionListener(a);
                 }
+                System.out.println("Button pressed");
 
                 displayDisc(current, content);
             }
