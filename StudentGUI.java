@@ -37,6 +37,7 @@ public class StudentGUI extends JComponent implements Runnable {
     public JLabel userPrompt;
     public JLabel passPrompt;
     public Course currentCourse;
+    public JPanel jpaneltop;
 
     //FOR TESTING
     public Teacher Jones = new Teacher("jjones", "password");
@@ -116,13 +117,11 @@ public class StudentGUI extends JComponent implements Runnable {
                         System.out.println("COURSE EXISTS!!");
                     }
                     for (int i = 0; i < currentCourse.getForum().size(); i++) {
-                        try {
-                            if (selectDiscName.equals(currentCourse.getForum().get(i).getMessage())) {
-                                selectDisc = currentCourse.getForum().get(i);
-                            }
-                        } catch (ActionFailedException ex) {
-                            ex.printStackTrace();
+
+                        if (selectDiscName.equals(currentCourse.getForum().get(i).getMessage())) {
+                            selectDisc = currentCourse.getForum().get(i);
                         }
+
                     }
                     displayDisc(selectDisc, frame.getContentPane());
                 } catch (NullPointerException nul) {
@@ -223,25 +222,21 @@ public class StudentGUI extends JComponent implements Runnable {
     }
 
     public void displayDisc(Discussion discussion, Container con) {
-        try {
-            frame.dispose();
-            frame = new JFrame("Student Dashboard");
-            con = frame.getContentPane();
-            JPanel discussionLayout = new JPanel();
+        frame.dispose();
+        frame = new JFrame("Student Dashboard");
+        content = frame.getContentPane();
+        JPanel discussionLayout = new JPanel();
 
-            JLabel discussPrompt = new JLabel(discussion.getMessage() + "\nPosted by: " + discussion.getPoster());
+        JLabel discussPrompt = new JLabel(discussion.getMessage());
 
 
-            discussionLayout.add(discussPrompt);
-            con.add(discussionLayout, BorderLayout.CENTER);
-            frame.setSize(600, 400);
-            frame.setLocationRelativeTo(null);
-            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            frame.setVisible(true);
+        discussionLayout.add(discussPrompt);
+        content.add(discussionLayout, BorderLayout.CENTER);
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setVisible(true);
 
-        } catch (ActionFailedException e) {
-
-        }
 
         addReply.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -310,7 +305,22 @@ public class StudentGUI extends JComponent implements Runnable {
 
         usernameText = new JLabel("Username: " + username);
         passwordText = new JLabel("Password: " + password);
-        grade =new JLabel("Current Grade: " + student.getGrade());
+        grade = new JLabel("Current Grade: " + student.getGrade());
+
+        jpaneltop = new JPanel();
+        courseButton = new JButton("See Course");
+        courseDropdown = new JComboBox<>(courseNames);
+        courseButton.addActionListener(actionListener);
+
+        accountButton = new JButton("Account");
+        accountButton.addActionListener(actionListener);
+
+        jpaneltop.add(refresh);
+        jpaneltop.add(courseDropdown);
+        jpaneltop.add(courseButton);
+        jpaneltop.add(accountButton);
+
+        content.add(jpaneltop, BorderLayout.NORTH);
 
         JPanel center = new JPanel();
 
@@ -323,7 +333,7 @@ public class StudentGUI extends JComponent implements Runnable {
         center.add(deleteAccount);
 
         center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
-        content.add(center);
+        content.add(center, BorderLayout.CENTER);
 
         frame.setSize(600, 400);
         frame.setLocationRelativeTo(null);
@@ -487,6 +497,10 @@ public class StudentGUI extends JComponent implements Runnable {
 
 
     public void displayCourse(Course course, Container con) {
+        frame.dispose();
+        frame = new JFrame("Student Dashboard");
+        content = frame.getContentPane();
+
         JPanel discChoice = new JPanel();
         discChoice.setLayout(new BoxLayout(discChoice, BoxLayout.Y_AXIS));
 
@@ -501,12 +515,20 @@ public class StudentGUI extends JComponent implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        jpaneltop = new JPanel();
+        courseButton = new JButton("See Course");
+        courseDropdown = new JComboBox<>(courseNames);
+        courseButton.addActionListener(actionListener);
 
-        if (!(discDropdown == null)) {
-            content.remove(discChoice);
+        accountButton = new JButton("Account");
+        accountButton.addActionListener(actionListener);
 
-            System.out.println("deleting");
-        }
+        jpaneltop.add(refresh);
+        jpaneltop.add(courseDropdown);
+        jpaneltop.add(courseButton);
+        jpaneltop.add(accountButton);
+
+        content.add(jpaneltop, BorderLayout.NORTH);
 
         discDropdown = new JComboBox<>(discNames);
         viewReplyButton = new JButton("See Replies");
@@ -515,14 +537,15 @@ public class StudentGUI extends JComponent implements Runnable {
         try {
             discChoice.add(discDropdown);
             discChoice.add(viewReplyButton);
-            con.add(BorderLayout.CENTER, discChoice);
-            con.revalidate(); // invokes layout manager
-            con.repaint();
+            content.add(discChoice,BorderLayout.CENTER);
         } catch (Exception e) {
             System.out.println("Null");
             e.printStackTrace();
         }
-
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
 
     }
 
