@@ -6,9 +6,9 @@ import java.util.ArrayList;
 public class ServerThread implements Runnable {
 
     Socket socket;
-    public static final String STUDENT_FILE = "StudentFile.txt";
-    public static final String TEACHER_FILE = "TeacherFile.txt";
-    public static final String COURSE_FILE = "CourseFile.txt";
+    public static final String STUDENT_FILE = "/Users/briangillis/Library/CloudStorage/OneDrive-purdue.edu/S4 S22/CS 180/Projects/5/StudentFile.txt";
+    public static final String TEACHER_FILE = "/Users/briangillis/Library/CloudStorage/OneDrive-purdue.edu/S4 S22/CS 180/Projects/5/TeacherFile.txt";
+    public static final String COURSE_FILE = "/Users/briangillis/Library/CloudStorage/OneDrive-purdue.edu/S4 S22/CS 180/Projects/5/CourseFile.txt";
     public static final Object STUDENT_GATE = new Object();
     public static final Object TEACHER_GATE = new Object();
     public static final Object COURSE_GATE = new Object();
@@ -57,6 +57,15 @@ public class ServerThread implements Runnable {
 
                     deleteStudent(user);
                 }
+                if (request.equals("New Reply")) {
+                    String course = reader.readLine();
+                    String poster = reader.readLine();
+                    String message = reader.readLine();
+                    String student = reader.readLine();
+                    String newreply = reader.readLine();
+
+                    addReply(course, poster, message, student, newreply);
+                }
             }
 
         } catch (Exception e) {
@@ -88,7 +97,7 @@ public class ServerThread implements Runnable {
         String temp;
         int counter = 0;
         ArrayList<Reply> replies = new ArrayList<>();
-        Course tempCourse = new Course("", new Teacher("", ""));
+        Course tempCourse = new Course("");
         ArrayList<Course> courses = new ArrayList<>();
 
         for (String s : lines) {
@@ -101,7 +110,7 @@ public class ServerThread implements Runnable {
 
                     ArrayList<Discussion> tempDiscs = new ArrayList<>();
                     tempDiscs.add(new Discussion(discName));
-                    tempCourse = new Course(courseName, new Teacher(teacherName, ""), tempDiscs);
+                    tempCourse = new Course(courseName, tempDiscs);
                     counter++;
                 } else {
                     String studentName = s.substring(0, s.indexOf(","));

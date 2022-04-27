@@ -38,6 +38,7 @@ public class StudentGUI extends JComponent implements Runnable {
     public JLabel passPrompt;
     public Course currentCourse;
     public JPanel jpaneltop;
+    public JLabel replyDisp;
 
     //FOR TESTING
     public Teacher Jones = new Teacher("jjones", "password");
@@ -226,11 +227,26 @@ public class StudentGUI extends JComponent implements Runnable {
         frame = new JFrame("Student Dashboard");
         content = frame.getContentPane();
         JPanel discussionLayout = new JPanel();
+        discussionLayout.setLayout(new BoxLayout(discussionLayout, BoxLayout.Y_AXIS));
+
 
         JLabel discussPrompt = new JLabel(discussion.getMessage());
 
+        Reply[] replies = new Reply[discussion.getReplies()];
+        String allReplies = "";
+        for (int i = 0; i < discussion.getReplies(); i++) {
+            replies[i] = discussion.getReplyArray().get(i);
+            allReplies += "<html>" + replies[i].getPoster().getUsername() + ": " + replies[i].getMessage() + "<br>";
+        }
+        allReplies += "</html>";
+
+        replyDisp = new JLabel(allReplies);
+        addReply = new JButton("Write Reply");
+        addReply.addActionListener(actionListener);
 
         discussionLayout.add(discussPrompt);
+        discussionLayout.add(replyDisp);
+        discussionLayout.add(addReply);
         content.add(discussionLayout, BorderLayout.CENTER);
         frame.setSize(600, 400);
         frame.setLocationRelativeTo(null);
@@ -255,19 +271,13 @@ public class StudentGUI extends JComponent implements Runnable {
 
         frame = new JFrame("New Reply");
         content = frame.getContentPane();
-
         JPanel center = new JPanel();
-        try {
-            JLabel discussPrompt = new JLabel(current.getMessage() + "\nPosted by: " + current.getPoster().getUsername());
+        JLabel replyPrompt = new JLabel("Write your reply");
+
+            JLabel discussPrompt = new JLabel(current.getMessage());
             center.add(discussPrompt);
 
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-        }
-
-        center.add(userPrompt);
+        center.add(replyPrompt);
         center.add(userText);
         center.add(confirm);
 
@@ -276,7 +286,6 @@ public class StudentGUI extends JComponent implements Runnable {
 
         userText.setText("");
 
-
         confirm.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Reply newRep = new Reply(student, userText.getText());
@@ -284,11 +293,27 @@ public class StudentGUI extends JComponent implements Runnable {
                 temp.add(newRep);
                 current.setReplies(temp);
 
+                try {
+                    PrintWriter writer = new PrintWriter(socket.getOutputStream());
+                    writer.println("New Reply");
+                    writer.flush();
+                    writer.println(current.getCourse());
+                    writer.flush();
+                    writer.println(current.getPoster().getUsername());
+                    writer.flush();
+                    writer.println(current.getMessage());
+                    writer.flush();
+                    writer.println(student.getUsername());
+                    writer.flush();
+                    writer.println(newReplyText.getText());
+                    writer.flush();
+
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
                 displayDisc(current, content);
             }
         });
-
-
 
         frame.setSize(600, 400);
         frame.setLocationRelativeTo(null);
