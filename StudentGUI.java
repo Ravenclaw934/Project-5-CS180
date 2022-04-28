@@ -245,7 +245,11 @@ public class StudentGUI extends JComponent implements Runnable {
         String allReplies = "";
         for (int i = 0; i < discussion.getReplies(); i++) {
             replies[i] = discussion.getReplyArray().get(i);
-            allReplies += "<html>" + replies[i].getPoster().getUsername() + ": " + replies[i].getMessage() + "<br>";
+            try {
+                allReplies += "<html>" + replies[i].getPoster().getUsername() + ": " + replies[i].getMessage() + "<br>";
+            } catch (ActionFailedException e) {
+                e.printStackTrace();
+            }
         }
         allReplies += "</html>";
 

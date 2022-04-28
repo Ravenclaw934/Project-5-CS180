@@ -90,8 +90,8 @@ public class CreationGUI extends JComponent implements Runnable {
 
                         frame.dispose();
 
-                       // Thread t = new Thread(new TeacherGUI(teachers, courses));
-                  //      t.start();
+                        Thread t = new Thread(new TeacherGUI(students, teachers, courses, socket, ois));
+                        t.start();
 
                     } else if (userType.equals("S")) {
                         Student newStudent = new Student(userText.getText(), passText.getText());

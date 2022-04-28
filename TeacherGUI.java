@@ -3,6 +3,10 @@ import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
@@ -29,20 +33,20 @@ import javax.swing.SwingUtilities;
  */
 
 public class TeacherGUI extends JComponent implements Runnable {
-	
+
     public String username;
     public String password;
-    
+
     public Teacher user;
-	
-	
-	// General variables for the GUI
-	public ArrayList<Student> students = new ArrayList<Student>();
+
+
+    // General variables for the GUI
+    public ArrayList<Student> students = new ArrayList<Student>();
     public ArrayList<Teacher> teachers = new ArrayList<Teacher>();
     public ArrayList<Course> courses = new ArrayList<Course>();
-	public ArrayList<Discussion> discussions = new ArrayList<Discussion>();
-	public ArrayList<JButton> buttons = new ArrayList<JButton>();
-    
+    public ArrayList<Discussion> discussions = new ArrayList<Discussion>();
+    public ArrayList<JButton> buttons = new ArrayList<JButton>();
+
     // Login text fields, labels, and buttons
     public JTextField userText;
     public JTextField passText;
@@ -52,7 +56,7 @@ public class TeacherGUI extends JComponent implements Runnable {
 
     // Main Menu button
     public JButton mainMenu = new JButton("Main Menu");
-    
+
     // Main Menu text fields, labels, and buttons
     public JLabel accountTest = new JLabel("Account Information Menu");
     public JButton account = new JButton("Account Info");
@@ -71,7 +75,7 @@ public class TeacherGUI extends JComponent implements Runnable {
     public JButton gradeStudent = new JButton("Grade");
     public JLabel importText = new JLabel("Import Discussion Text");
     public JButton importDiscussion = new JButton("Import");
-    
+
     // Account menu text fields, labels, and buttons
     public JLabel usernameText = new JLabel("Username: ");
     public JButton editUsername = new JButton("Change Username");
@@ -79,33 +83,33 @@ public class TeacherGUI extends JComponent implements Runnable {
     public JButton editPassword = new JButton("Change Password");
     public JLabel deleteText = new JLabel("Delete Account");
     public JButton deleteAccount = new JButton("Delete");
-	public JLabel backText = new JLabel("Go Back");
-	public JButton goBack = new JButton("Back");
+    public JLabel backText = new JLabel("Go Back");
+    public JButton goBack = new JButton("Back");
 
-	// Course Creation Menu TextFields, Labels, Button
-	public JLabel createNewCourse = new JLabel("Create Course: ");
-	public JLabel coursePrompt = new JLabel("Course Name: ");
-	public JButton createCourseButton = new JButton("Create Course");
+    // Course Creation Menu TextFields, Labels, Button
+    public JLabel createNewCourse = new JLabel("Create Course: ");
+    public JLabel coursePrompt = new JLabel("Course Name: ");
+    public JButton createCourseButton = new JButton("Create Course");
 
-	// Discussion Creation Menu Labels and Button
-	public JLabel createNewDisc = new JLabel("Create Discussion:");
-	public JLabel discPrompt = new JLabel("Discussion Name: ");
-	public JButton createDiscussionButton = new JButton("Create Discussion");
+    // Discussion Creation Menu Labels and Button
+    public JLabel createNewDisc = new JLabel("Create Discussion:");
+    public JLabel discPrompt = new JLabel("Discussion Name: ");
+    public JButton createDiscussionButton = new JButton("Create Discussion");
 
-	// Discussion Creation Menu Labels and Button
-	public JLabel editNewDisc = new JLabel("Edit Discussion:");
-	public JLabel editDiscPrompt = new JLabel("Pick a discussion number to edit: ");
-	public JButton editDiscussionButton = new JButton("Edit Discussion");
-	public JLabel changeText = new JLabel("What are you changing it into?");
+    // Discussion Creation Menu Labels and Button
+    public JLabel editNewDisc = new JLabel("Edit Discussion:");
+    public JLabel editDiscPrompt = new JLabel("Pick a discussion number to edit: ");
+    public JButton editDiscussionButton = new JButton("Edit Discussion");
+    public JLabel changeText = new JLabel("What are you changing it into?");
 
-	// Discussion Delete Menu Labels and Button
-	public JLabel deleteDisc = new JLabel("Delete Discussion: ");
-	public JLabel deleteDiscPrompt = new JLabel("Pick a discussion number to delete: ");
-	public JButton deleteDiscussionButton = new JButton("Delete Discussion");
+    // Discussion Delete Menu Labels and Button
+    public JLabel deleteDisc = new JLabel("Delete Discussion: ");
+    public JLabel deleteDiscPrompt = new JLabel("Pick a discussion number to delete: ");
+    public JButton deleteDiscussionButton = new JButton("Delete Discussion");
 
     // Refresh Button
     public JButton refresh = new JButton("Refresh");
-    
+
     public JButton confirm = new JButton("Confirm");
     public JButton confirmUser = new JButton("Confirm");
     public JButton confirmPass = new JButton("Confirm");
@@ -118,69 +122,105 @@ public class TeacherGUI extends JComponent implements Runnable {
     public JButton confirmDiscussionEdit = new JButton("Confirm");
     public JButton confirmDiscussionEdit2 = new JButton("Confirm");
     public JButton confirmDiscussionEdit3 = new JButton("Confirm");
-    
 
-    
+
+
     JComboBox<String> courseDropdown;
     JComboBox<String> discDropdown;
     JComboBox<String> studentDropdown;
-    
+
     JFrame frame;
     Container content;
-    
+
     Student Anthony = new Student("ajwhittl","password");
     Teacher Jones = new Teacher("jjones", "password");
     Course history = new Course("History");
 
+    Socket socket;
+    ObjectInputStream ois;
+
     public TeacherGUI() {
-    	students = new ArrayList<Student>();
-    	students.add(Anthony);
-    	courses = new ArrayList<Course>();
-    	courses.add(history);
-    	teachers = new ArrayList<Teacher>();
-    	teachers.add(Jones);
-    	
+        students = new ArrayList<Student>();
+        students.add(Anthony);
+        courses = new ArrayList<Course>();
+        courses.add(history);
+        teachers = new ArrayList<Teacher>();
+        teachers.add(Jones);
+
         buttons.add(confirm);
-    	buttons.add(refresh);
-    	buttons.add(confirmUser);
-    	buttons.add(confirmPass);
-    	buttons.add(confirmReply);
-    	buttons.add(confirmDiscussionReply);
-    	buttons.add(confirmCreateDiscussion);
-    	buttons.add(confirmDiscussionCreate);
-    	buttons.add(confirmGradeStudentMenu);
-    	buttons.add(confirmGradeFinal);
-    	buttons.add(confirmDiscussionEdit);
-    	buttons.add(confirmDiscussionEdit2);
-    	buttons.add(confirmDiscussionEdit3);
-    	buttons.add(createCourseButton);
-    	buttons.add(createDiscussionButton);
-    	buttons.add(createDiscussionButton);
-    	buttons.add(editDiscussionButton);
-    	buttons.add(deleteDiscussionButton);
-    	buttons.add(deleteAccount);
-    	buttons.add(goBack);
-    	buttons.add(editPassword);
-    	buttons.add(editUsername);
-    	buttons.add(enterButton);
-    	buttons.add(mainMenu);
-    	buttons.add(account);
-    	buttons.add(createCourse);
-    	buttons.add(createDiscussion);
-    	buttons.add(editDiscussion);
-    	buttons.add(deleteDiscussion);
-    	buttons.add(reply);
-    	buttons.add(popularReply);
-    	buttons.add(gradeStudent);
-    	buttons.add(importDiscussion);
-    	
-    	
+        buttons.add(refresh);
+        buttons.add(confirmUser);
+        buttons.add(confirmPass);
+        buttons.add(confirmReply);
+        buttons.add(confirmDiscussionReply);
+        buttons.add(confirmCreateDiscussion);
+        buttons.add(confirmDiscussionCreate);
+        buttons.add(confirmGradeStudentMenu);
+        buttons.add(confirmGradeFinal);
+        buttons.add(confirmDiscussionEdit);
+        buttons.add(confirmDiscussionEdit2);
+        buttons.add(confirmDiscussionEdit3);
+        buttons.add(createCourseButton);
+        buttons.add(createDiscussionButton);
+        buttons.add(createDiscussionButton);
+        buttons.add(editDiscussionButton);
+        buttons.add(deleteDiscussionButton);
+        buttons.add(deleteAccount);
+        buttons.add(goBack);
+        buttons.add(editPassword);
+        buttons.add(editUsername);
+        buttons.add(mainMenu);
+        buttons.add(account);
+        buttons.add(createCourse);
+        buttons.add(createDiscussion);
+        buttons.add(editDiscussion);
+        buttons.add(deleteDiscussion);
+        buttons.add(reply);
+        buttons.add(popularReply);
+        buttons.add(gradeStudent);
+        buttons.add(importDiscussion);
     }
 
-    public TeacherGUI(ArrayList<Student> students, ArrayList<Teacher> teachers, ArrayList<Course> courses) {
+    public TeacherGUI(ArrayList<Student> students, ArrayList<Teacher> teachers, ArrayList<Course> courses,
+                      Socket socket, ObjectInputStream ois) {
         this.students = students;
         this.teachers = teachers;
         this.courses = courses;
+        this.socket = socket;
+        this.ois = ois;
+
+        buttons.add(confirm);
+        buttons.add(refresh);
+        buttons.add(confirmUser);
+        buttons.add(confirmPass);
+        buttons.add(confirmReply);
+        buttons.add(confirmDiscussionReply);
+        buttons.add(confirmCreateDiscussion);
+        buttons.add(confirmDiscussionCreate);
+        buttons.add(confirmGradeStudentMenu);
+        buttons.add(confirmGradeFinal);
+        buttons.add(confirmDiscussionEdit);
+        buttons.add(confirmDiscussionEdit2);
+        buttons.add(confirmDiscussionEdit3);
+        buttons.add(createCourseButton);
+        buttons.add(createDiscussionButton);
+        buttons.add(createDiscussionButton);
+        buttons.add(editDiscussionButton);
+        buttons.add(deleteDiscussionButton);
+        buttons.add(deleteAccount);
+        buttons.add(goBack);
+        buttons.add(editPassword);
+        buttons.add(editUsername);
+        buttons.add(mainMenu);
+        buttons.add(account);
+        buttons.add(createCourse);
+        buttons.add(createDiscussion);
+        buttons.add(editDiscussion);
+        buttons.add(deleteDiscussion);
+        buttons.add(reply);
+        buttons.add(popularReply);
+        buttons.add(gradeStudent);
+        buttons.add(importDiscussion);
     }
 
     public static void main(String[] args) {
@@ -202,7 +242,7 @@ public class TeacherGUI extends JComponent implements Runnable {
                             username = teacher.getUsername();
                             password = teacher.getPassword();
                             user = teacher;
-                	        removeListeners();
+                            removeListeners();
                             mainMenu();
                         }
                     }
@@ -262,1163 +302,1289 @@ public class TeacherGUI extends JComponent implements Runnable {
         frame.setVisible(true);
 
     }
-    
+
     public void mainMenu()
     {
-    	
-    	frame.dispose();
-    	
-    	frame = new JFrame("Main Menu");
-    	content = frame.getContentPane();
-    	
-		JPanel left = new JPanel();
-		JPanel center = new JPanel();
-		JPanel right = new JPanel();
-		
-		left.add(accountTest);
-		left.add(account);
-		left.add(courseText);
-		left.add(createCourse);
-		left.add(gradeText);
-		left.add(gradeStudent);
-		left.add(importText);
-		left.add(importDiscussion);
-		
-		center.add(createDiscText);
-		center.add(createDiscussion);
-		center.add(editDiscText);
-		center.add(editDiscussion);
-		center.add(deleteDiscText);
-		center.add(deleteDiscussion);
-		
-		right.add(replyText);
-		right.add(reply);
-		right.add(popularReply);
-		
-		left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
-		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
-		right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
-		
-		content.add(left, BorderLayout.WEST);
-		content.add(center, BorderLayout.CENTER);
-		content.add(right, BorderLayout.EAST);
-    	
+
+        frame.dispose();
+
+        frame = new JFrame("Main Menu");
+        content = frame.getContentPane();
+
+        JPanel left = new JPanel();
+        JPanel center = new JPanel();
+        JPanel right = new JPanel();
+
+        left.add(accountTest);
+        left.add(account);
+        left.add(courseText);
+        left.add(createCourse);
+        left.add(gradeText);
+        left.add(gradeStudent);
+        left.add(importText);
+        left.add(importDiscussion);
+
+        center.add(createDiscText);
+        center.add(createDiscussion);
+        center.add(editDiscText);
+        center.add(editDiscussion);
+        center.add(deleteDiscText);
+        center.add(deleteDiscussion);
+
+        right.add(replyText);
+        right.add(reply);
+        right.add(popularReply);
+
+        left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
+        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+        right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
+
+        content.add(left, BorderLayout.WEST);
+        content.add(center, BorderLayout.CENTER);
+        content.add(right, BorderLayout.EAST);
+
         frame.setSize(600, 400);
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-    	
+
         account.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
-    	        
-    	        removeListeners();
-    	        accountMenu();
-    	        
-    	    }
-    	});
-        
+            public void actionPerformed(ActionEvent e) {
+
+                removeListeners();
+                accountMenu();
+
+            }
+        });
+
         createCourse.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
-    	        
-    	        removeListeners();
-    	        courseMenu();
-    	        
-    	    }
-    	});
-        
+            public void actionPerformed(ActionEvent e) {
+
+                removeListeners();
+                courseMenu();
+
+            }
+        });
+
         createDiscussion.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
-    	        
-    	        removeListeners();
-    	        DiscussionMenu();
-    	        
-    	    }
-    	});
-        
+            public void actionPerformed(ActionEvent e) {
+
+                removeListeners();
+                DiscussionMenu();
+
+            }
+        });
+
         editDiscussion.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
-    	        
-    	        removeListeners();
-    	        editDiscussionMenu();
-    	        
-    	    }
-    	});
-        
+            public void actionPerformed(ActionEvent e) {
+
+                removeListeners();
+                editDiscussionMenu();
+
+            }
+        });
+
         deleteDiscussion.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
-    	        
-    	        removeListeners();
-    	        deleteDiscussionMenu();
-    	        
-    	    }
-    	});
-        
+            public void actionPerformed(ActionEvent e) {
+
+                removeListeners();
+                deleteDiscussionMenu();
+
+            }
+        });
+
         reply.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
-    	        removeListeners();
-    	    	replyMenu();
-    	        
-    	        
-    	    }
-    	});
-        
+            public void actionPerformed(ActionEvent e) {
+                removeListeners();
+                replyMenu();
+
+
+            }
+        });
+
         popularReply.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
-    	        removeListeners();
-    	    	
-    	        
-    	        
-    	    }
-    	});
-        
+            public void actionPerformed(ActionEvent e) {
+                removeListeners();
+
+
+
+            }
+        });
+
         gradeStudent.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
-    	        removeListeners();
-    	    	gradeMenu();
-    	        
-    	        
-    	    }
-    	});
-        
+            public void actionPerformed(ActionEvent e) {
+                removeListeners();
+                gradeMenu();
+
+
+            }
+        });
+
         importDiscussion.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
-    	        removeListeners();
-    	    	
-    	        
-    	        
-    	    }
-    	});
-        
-    	
+            public void actionPerformed(ActionEvent e) {
+                removeListeners();
+
+
+
+            }
+        });
+
+
     }
-    
+
     public void accountMenu()
     {
-    	
-    	frame.dispose();
-    	
-    	frame = new JFrame("Account Settings");
-    	content = frame.getContentPane();
-    	
+
+        frame.dispose();
+
+        frame = new JFrame("Account Settings");
+        content = frame.getContentPane();
+
         usernameText = new JLabel("Username: " + username);
         passwordText = new JLabel("Password: " + password);
-    	
-    	JPanel center = new JPanel();
-    	
-    	center.add(usernameText);
-    	center.add(editUsername);
-    	center.add(passwordText);
-    	center.add(editPassword);
-    	center.add(deleteText);
-    	center.add(deleteAccount);
-		center.add(backText);
-		center.add(goBack);
-    	
-		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
-		content.add(center);
-    	
+
+        JPanel center = new JPanel();
+
+        center.add(usernameText);
+        center.add(editUsername);
+        center.add(passwordText);
+        center.add(editPassword);
+        center.add(deleteText);
+        center.add(deleteAccount);
+        center.add(backText);
+        center.add(goBack);
+
+        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+        content.add(center);
+
         frame.setSize(600, 400);
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-        
+
         editUsername.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
-    	        removeListeners();
-    	    	changeUsername();
-    	        
-    	        
-    	    }
-    	});
-        
+            public void actionPerformed(ActionEvent e) {
+                removeListeners();
+                changeUsername();
+
+
+            }
+        });
+
         editPassword.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
-    	        removeListeners();
-    	    	changePassword();
-    	        
-    	        
-    	    }
-    	});
-        
+            public void actionPerformed(ActionEvent e) {
+                removeListeners();
+                changePassword();
+
+
+            }
+        });
+
         deleteAccount.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
-    	        
-    	    	frame.dispose();
-    	    	
-    	    	for(int i = 0; i < teachers.size(); i++)
-    	    	{
-    	    		if(teachers.get(i).getUsername().equals(username))
-    	    		{
-    	    			teachers.remove(i);
-    	    		}
-    	    	}
-    	    	
-    	        removeListeners();
-    	    	run();
-    	        
-    	        
-    	    }
-    	});
+            public void actionPerformed(ActionEvent e) {
 
-		goBack.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-    	        removeListeners();
-				mainMenu();
+                frame.dispose();
+
+                for(int i = 0; i < teachers.size(); i++)
+                {
+                    if(teachers.get(i).getUsername().equals(username))
+                    {
+                        try {
+                            PrintWriter writer = new PrintWriter(socket.getOutputStream());
+                            writer.println("Delete Teacher");
+                            writer.flush();
+                            writer.println(teachers.get(i).getUsername());
+                            writer.flush();
+
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                        teachers.remove(i);
+                    }
+                }
+
+                removeListeners();
+                run();
 
 
-			}
-		});
-    	
+            }
+        });
+
+        goBack.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                removeListeners();
+                mainMenu();
+
+
+            }
+        });
+
     }
-    
+
     public void changeUsername()
     {
-    	frame.dispose();
-    	
-    	frame = new JFrame("Change Username");
-    	content = frame.getContentPane();
-    	
-    	JPanel center = new JPanel();
-    	
-    	center.add(userPrompt);
-    	center.add(userText);
-    	center.add(confirm);
-    	
-		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
-		content.add(center);
-		
-		String oldUsername = username;
-		
-		userText.setText("");
-	
-		
-		confirmUser.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        
-		    	username = userText.getText();
-		    	
-				for(int i = 0; i < teachers.size(); i++)
-				{
-					if(teachers.get(i).getUsername().equals(oldUsername))
-					{
-						try {
-							teachers.get(i).setUsername(username);
-						} catch (AccountExistsException e1) {
-							JOptionPane.showInternalMessageDialog(null, "Username is already in use!", "Action Failed",
-		                            JOptionPane.ERROR_MESSAGE);
-						}
-					}
-				}
-    	        removeListeners();
-				accountMenu();
-		        
-		        
-		    }
-		});
-		
+        frame.dispose();
 
-    	
+        frame = new JFrame("Change Username");
+        content = frame.getContentPane();
+
+        JPanel center = new JPanel();
+
+        center.add(userPrompt);
+        center.add(userText);
+        center.add(confirmUser);
+
+        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+        content.add(center);
+
+        String oldUsername = username;
+
+        userText.setText("");
+
+
+        confirmUser.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                try {
+                    for (Teacher t : teachers) {
+                        if (t.getUsername().equals(userText.getText())) {
+                            throw new AccountExistsException("");
+                        }
+                    }
+
+                    for (int i = 0; i < teachers.size(); i++) {
+                        if (teachers.get(i).getUsername().equals(oldUsername)) {
+                            username = userText.getText();
+                            teachers.get(i).setUsername(username);
+
+                            try {
+                                PrintWriter writer = new PrintWriter(socket.getOutputStream());
+                                writer.println("Change Teacher Username");
+                                writer.flush();
+                                writer.println(oldUsername);
+                                writer.flush();
+                                writer.println(username);
+                                writer.flush();
+
+                            } catch (IOException exception) {
+                                exception.printStackTrace();
+                            }
+                        }
+                    }
+                } catch (AccountExistsException e1) {
+                    JOptionPane.showInternalMessageDialog(null, "Username is already in use!", "Action Failed",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+
+                removeListeners();
+                accountMenu();
+
+
+            }
+        });
+
+
+
         frame.setSize(600, 400);
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-    	
+
     }
-    
+
     public void changePassword()
     {
-    	frame.dispose();
-    	
-    	frame = new JFrame("Change Password");
-    	content = frame.getContentPane();
-    	
-    	JPanel center = new JPanel();
-    	
-    	center.add(passPrompt);
-    	center.add(passText);
-    	center.add(confirm);
-    	
-		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
-		content.add(center);
-		
-		String oldPassword = password;
-		
-		passText.setText("");
-	
-		
-		confirmPass.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        
-		    	password = passText.getText();
-		    	
-				for(int i = 0; i < teachers.size(); i++)
-				{
-					if(teachers.get(i).getPassword().equals(oldPassword))
-					{
-						teachers.get(i).setPassword(password);
-					}
-				}
-    	        removeListeners();
-				accountMenu();
+        frame.dispose();
+
+        frame = new JFrame("Change Password");
+        content = frame.getContentPane();
+
+        JPanel center = new JPanel();
+
+        center.add(passPrompt);
+        center.add(passText);
+        center.add(confirmPass);
+
+        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+        content.add(center);
+
+        String oldPassword = password;
+
+        passText.setText("");
 
 
-			}
-		});
+        confirmPass.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
 
-		frame.setSize(600, 400);
-		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
-    	
+                password = passText.getText();
+
+                for(int i = 0; i < teachers.size(); i++)
+                {
+                    if(teachers.get(i).getPassword().equals(oldPassword))
+                    {
+                        teachers.get(i).setPassword(password);
+
+                        try {
+                            PrintWriter writer = new PrintWriter(socket.getOutputStream());
+                            writer.println("Change Teacher Password");
+                            writer.flush();
+                            writer.println(username);
+                            writer.flush();
+                            writer.println(password);
+                            writer.flush();
+
+                        } catch (IOException exception) {
+                            exception.printStackTrace();
+                        }
+                    }
+                }
+                removeListeners();
+                accountMenu();
+
+
+            }
+        });
+
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+
     }
 
 
-	public void courseMenu() {
+    public void courseMenu() {
 
-		frame.dispose();
+        frame.dispose();
 
-		frame = new JFrame("Create Course");
-		content = frame.getContentPane();
-
-
-		JPanel center = new JPanel();
-
-		center.add(createNewCourse);
-		center.add(createCourseButton);
-		center.add(backText);
-		center.add(goBack);
-
-		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
-		content.add(center);
-
-		frame.setSize(600, 400);
-		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
-
-		createCourseButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-    	        removeListeners();
-				createCourse();
-
-			}
-		});
-
-		goBack.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-    	        removeListeners();
-				mainMenu();
-
-			}
-		});
-
-	}
+        frame = new JFrame("Create Course");
+        content = frame.getContentPane();
 
 
-	public void createCourse(){
-		frame.dispose();
+        JPanel center = new JPanel();
 
-		frame = new JFrame("Create Course");
-		content = frame.getContentPane();
+        center.add(createNewCourse);
+        center.add(createCourseButton);
+        center.add(backText);
+        center.add(goBack);
 
-		JPanel center = new JPanel();
+        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+        content.add(center);
 
-		center.add(coursePrompt);
-		center.add(passText);
-		center.add(confirm);
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
 
-		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
-		content.add(center);
+        createCourseButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                removeListeners();
+                createCourse();
 
+            }
+        });
 
-		passText.setText("");
+        goBack.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                removeListeners();
+                mainMenu();
 
+            }
+        });
 
-		confirm.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				Course course = new Course(passText.getText());
-
-				courses.add(course);
-    	        removeListeners();
-				courseMenu();
-
-
-			}
-		});
-
-		frame.setSize(600, 400);
-		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
-
-	}
-
-	public void DiscussionMenu(){
-
-		frame.dispose();
-
-		frame = new JFrame("Create Discussion");
-		content = frame.getContentPane();
-
-		JLabel discList = new JLabel("You currently have " + discussions.size() + " discussions.");
-		JPanel center = new JPanel();
+    }
 
 
-		center.add(discList);
-		center.add(createNewDisc);
-		center.add(createDiscussionButton);
-		center.add(backText);
-		center.add(goBack);
+    public void createCourse(){
+        frame.dispose();
 
-		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
-		content.add(center);
+        frame = new JFrame("Create Course");
+        content = frame.getContentPane();
 
-		frame.setSize(600, 400);
-		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
+        JPanel center = new JPanel();
 
-		createDiscussionButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-    	        removeListeners();
-				createDiscussion();
+        center.add(coursePrompt);
+        center.add(passText);
+        center.add(confirm);
 
-			}
-		});
-
-		goBack.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-    	        removeListeners();
-				mainMenu();
-
-			}
-		});
+        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+        content.add(center);
 
 
-	}
-	
-	public void gradeMenu()
-	{
-		
-		frame.dispose();
-		
-		frame = new JFrame("Grade Student");
-		content = frame.getContentPane();
-		
-		JPanel center = new JPanel();
-		
-		
-		String[] names = new String[students.size()];
-		
-		
-		for(int i = 0; i < students.size(); i++)
-		{
-			names[i] = students.get(i).getUsername();
-			
-		}
-		
-		studentDropdown = new JComboBox<String>(names);
-		
-		center.add(studentDropdown);
-		center.add(confirmGradeStudentMenu);
-		
-		confirmGradeStudentMenu.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
-    	        
-    	    	
-    	        for(int i = 0; i < students.size(); i++)
-    	        {
-    	        	if(students.get(i).getUsername().equals(studentDropdown.getSelectedItem()))
-    	        	{
-    	    	        removeListeners();
-    	        		gradeStudent(students.get(i));
-    	        	}
-    	        }
-    	        
-    	    }
-    	});
-		
-		content.add(center);
+        passText.setText("");
 
-		frame.setSize(600, 400);
-		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
-		
-		
-	}
-	
-	
-	public void gradeStudent(Student user)
-	{
-		frame.dispose();
-		
-		frame = new JFrame("Student Grading");
-		content = frame.getContentPane();
-		
-		JPanel center = new JPanel();
-		
-		center.add(new JLabel(user.getUsername()));
-		
-		String[] options = {"1", "2", "3", "4", "5"};
-		
-		JComboBox<String> grades = new JComboBox<String>(options);
-		
-		center.add(grades);
-		
-		center.add(confirmGradeFinal);
-		
-		confirmGradeFinal.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
-    	        
-    	    	
-    	        for(int i = 0; i < students.size(); i++)
-    	        {
-    	        	if(students.get(i).equals(user))
-    	        	{
-    	        		students.get(i).setGrade(Integer.parseInt(grades.getItemAt(grades.getSelectedIndex())));
-    	    	        removeListeners();
-    	        		mainMenu();
-    	        	}
-    	        }
-    	        
-    	        
-    	    }
-    	});
-		
-		content.add(center);
 
-		frame.setSize(600, 400);
-		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
-		
-	}
-	
-	
-	
+        confirm.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
 
-	public void createDiscussion(){
+                Course course = new Course(passText.getText());
 
-		frame.dispose();
+                courses.add(course);
 
-		frame = new JFrame("Create Discussion");
-		content = frame.getContentPane();
-		
-		JPanel center = new JPanel();
-		
-		String[] names = new String[courses.size()];
-		
-		for(int i = 0; i < courses.size(); i++)
-		{
-			names[i] = courses.get(i).getCourseName();
-		}
-		
-		courseDropdown = new JComboBox<String>(names);
-		
-		center.add(courseDropdown);
-		center.add(confirmCreateDiscussion);
-		
-		content.add(center);
-		
+                try {
+                    PrintWriter writer = new PrintWriter(socket.getOutputStream());
+                    writer.println("Create Course");
+                    writer.flush();
+                    writer.println(course.getCourseName());
+                    writer.flush();
+                    writer.println("Teacher");
+                    writer.flush();
+
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+
+                removeListeners();
+                courseMenu();
+
+
+            }
+        });
+
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+
+    }
+
+    public void DiscussionMenu(){
+
+        frame.dispose();
+
+        frame = new JFrame("Create Discussion");
+        content = frame.getContentPane();
+
+        JLabel discList = new JLabel("You currently have " + discussions.size() + " discussions.");
+        JPanel center = new JPanel();
+
+
+        center.add(discList);
+        center.add(createNewDisc);
+        center.add(createDiscussionButton);
+        center.add(backText);
+        center.add(goBack);
+
+        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+        content.add(center);
+
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+
+        createDiscussionButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                removeListeners();
+                createDiscussion();
+
+            }
+        });
+
+        goBack.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                removeListeners();
+                mainMenu();
+
+            }
+        });
+
+
+    }
+
+    public void gradeMenu()
+    {
+
+        frame.dispose();
+
+        frame = new JFrame("Grade Student");
+        content = frame.getContentPane();
+
+        JPanel center = new JPanel();
+
+
+        String[] names = new String[students.size()];
+
+
+        for(int i = 0; i < students.size(); i++)
+        {
+            names[i] = students.get(i).getUsername();
+
+        }
+
+        studentDropdown = new JComboBox<String>(names);
+
+        center.add(studentDropdown);
+        center.add(confirmGradeStudentMenu);
+
+        confirmGradeStudentMenu.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+
+                for(int i = 0; i < students.size(); i++)
+                {
+                    if(students.get(i).getUsername().equals(studentDropdown.getSelectedItem()))
+                    {
+                        removeListeners();
+                        gradeStudent(students.get(i));
+                    }
+                }
+
+            }
+        });
+
+        content.add(center);
+
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+
+
+    }
+
+
+    public void gradeStudent(Student user)
+    {
+        frame.dispose();
+
+        frame = new JFrame("Student Grading");
+        content = frame.getContentPane();
+
+        JPanel center = new JPanel();
+
+        center.add(new JLabel(user.getUsername()));
+
+        String[] options = {"0", "1", "2", "3", "4", "5"};
+
+        JComboBox<String> grades = new JComboBox<String>(options);
+
+        center.add(grades);
+
+        center.add(confirmGradeFinal);
+
+        confirmGradeFinal.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+
+                for(int i = 0; i < students.size(); i++)
+                {
+                    if(students.get(i).equals(user))
+                    {
+                        students.get(i).setGrade(Integer.parseInt(grades.getItemAt(grades.getSelectedIndex())));
+
+                        try {
+                            PrintWriter writer = new PrintWriter(socket.getOutputStream());
+                            writer.println("Grade");
+                            writer.flush();
+                            writer.println(students.get(i).getUsername());
+                            writer.flush();
+                            writer.println(students.get(i).getGrade());
+                            writer.flush();
+
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+
+                        removeListeners();
+                        mainMenu();
+                    }
+                }
+
+
+            }
+        });
+
+        content.add(center);
+
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+
+    }
+
+
+
+
+    public void createDiscussion(){
+
+        frame.dispose();
+
+        frame = new JFrame("Create Discussion");
+        content = frame.getContentPane();
+
+        JPanel center = new JPanel();
+
+        String[] names = new String[courses.size()];
+
+        for(int i = 0; i < courses.size(); i++)
+        {
+            names[i] = courses.get(i).getCourseName();
+        }
+
+        courseDropdown = new JComboBox<String>(names);
+
+        center.add(courseDropdown);
+        center.add(confirmCreateDiscussion);
+
+        content.add(center);
+
         confirmCreateDiscussion.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
-    	        
-    	        removeListeners();
-    	        discussionCreator(courseDropdown.getItemAt(courseDropdown.getSelectedIndex()));
-    	        
-    	    }
-    	});
-		
-		frame.setSize(600, 400);
-		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
+            public void actionPerformed(ActionEvent e) {
 
-	}
-	
-	public void discussionCreator(String course)
-	{
-		frame.dispose();
+                removeListeners();
+                discussionCreator(courseDropdown.getItemAt(courseDropdown.getSelectedIndex()));
 
-		frame = new JFrame("Discussion Creator");
-		content = frame.getContentPane();
-		
-		JPanel center = new JPanel();
-		
-		center.add(new JLabel(course));
-		
-		passText.setText("");
-		
-		center.add(passText);
-		
-		center.add(confirmDiscussionCreate);
-		
-		content.add(center);
-		
+            }
+        });
+
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+
+    }
+
+    public void discussionCreator(String course)
+    {
+        frame.dispose();
+
+        frame = new JFrame("Discussion Creator");
+        content = frame.getContentPane();
+
+        JPanel center = new JPanel();
+
+        center.add(new JLabel(course));
+
+        passText.setText("");
+
+        center.add(passText);
+
+        center.add(confirmDiscussionCreate);
+
+        content.add(center);
+
         confirmDiscussionCreate.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
-    	        
-    	    	
-    	        String message = passText.getText();
-    	        
-    	        for(int i = 0; i < courses.size(); i++)
-    	        {
-    	        	if(courses.get(i).getCourseName().equals(course))
-    	        	{
-    	        		courses.get(i).forum.add(new Discussion(message));
-    	        		System.out.println(courses.get(i).forum.get(0).getMessage());
-    	    	        removeListeners();
-    	        		mainMenu();
-    	        	}
-    	        }
-    	        
-    	    }
-    	});
-		
-		frame.setSize(600, 400);
-		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
-	}
+            public void actionPerformed(ActionEvent e) {
 
-	public void editDiscussionMenu(){
 
-		frame.dispose();
+                String message = passText.getText();
 
-		frame = new JFrame("Edit Discussion");
-		content = frame.getContentPane();
-		
-		JPanel center = new JPanel();
-		
-		String[] names = new String[courses.size()];
-		
-		for(int i = 0; i < courses.size(); i++)
-		{
-			names[i] = courses.get(i).getCourseName();
-		}
-		
-		courseDropdown = new JComboBox<String>(names);
-		
-		center.add(courseDropdown);
-		center.add(confirmDiscussionEdit);
-		
-		content.add(center);
-		
+                for(int i = 0; i < courses.size(); i++)
+                {
+                    if(courses.get(i).getCourseName().equals(course))
+                    {
+                        courses.get(i).forum.add(new Discussion(message));
+
+                        try {
+                            PrintWriter writer = new PrintWriter(socket.getOutputStream());
+                            writer.println("Create Discussion");
+                            writer.flush();
+                            writer.println(courses.get(i).getCourseName());
+                            writer.flush();
+                            writer.println("Teacher");
+                            writer.flush();
+                            writer.println(message);
+                            writer.flush();
+
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+
+                        removeListeners();
+                        mainMenu();
+                    }
+                }
+
+            }
+        });
+
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+
+    public void editDiscussionMenu(){
+
+        frame.dispose();
+
+        frame = new JFrame("Edit Discussion");
+        content = frame.getContentPane();
+
+        JPanel center = new JPanel();
+
+        String[] names = new String[courses.size()];
+
+        for(int i = 0; i < courses.size(); i++)
+        {
+            names[i] = courses.get(i).getCourseName();
+        }
+
+        courseDropdown = new JComboBox<String>(names);
+
+        center.add(courseDropdown);
+        center.add(confirmDiscussionEdit);
+
+        content.add(center);
+
         confirmDiscussionEdit.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
-    	        
-    	        removeListeners();
-    	        editDiscussionOne(courseDropdown.getItemAt(courseDropdown.getSelectedIndex()));
-    	        
-    	    }
-    	});
-		
-		frame.setSize(600, 400);
-		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
+            public void actionPerformed(ActionEvent e) {
+
+                removeListeners();
+                editDiscussionOne(courseDropdown.getItemAt(courseDropdown.getSelectedIndex()));
+
+            }
+        });
+
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
 
 
-	}
-	
-	public void editDiscussionOne(String course)
-	{
-		
-		frame.dispose();
-		
-		frame = new JFrame("Edit Discussion");
-		
-		content = frame.getContentPane();
-		
-		JPanel center = new JPanel();
-		
-		center.add(new JLabel(course));
+    }
 
-		Course place = null;
-		
-		for(int i = 0; i < courses.size(); i++)
-		{
-			if(courses.get(i).getCourseName().equals(course))
-			{
-				place = courses.get(i);
-			}
-		}
-		
-		String[] names = new String[place.getForum().size()];
-		
-		for(int i = 0; i < place.getForum().size(); i++)
-		{
-			names[i] = place.getForum().get(i).getMessage();
-		}
-		
-		discDropdown = new JComboBox<String>(names);
-		
-		center.add(discDropdown);
-		center.add(confirmDiscussionEdit2);
-		
-		
-		confirmDiscussionEdit2.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
-    	        
-    	        removeListeners();
-    	        editDiscussion(course, discDropdown.getItemAt(discDropdown.getSelectedIndex()));
-    	        
-    	    }
-    	});
-		
-		content.add(center);
-		frame.setSize(600, 400);
-		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
-		
-	}
+    public void editDiscussionOne(String course)
+    {
 
-	public void editDiscussion(String course, String discussion) {
+        frame.dispose();
 
-		frame.dispose();
+        frame = new JFrame("Edit Discussion");
 
-		frame = new JFrame("Discussion Creator");
-		content = frame.getContentPane();
-		
-		JPanel center = new JPanel();
-		
-		center.add(new JLabel(course));
-		
-		passText.setText("");
-		
-		center.add(passText);
-		
-		center.add(confirmDiscussionEdit3);
-		
-		content.add(center);
-		
-		int index = 0;
-		
+        content = frame.getContentPane();
+
+        JPanel center = new JPanel();
+
+        center.add(new JLabel(course));
+
+        Course place = null;
+
+        for(int i = 0; i < courses.size(); i++)
+        {
+            if(courses.get(i).getCourseName().equals(course))
+            {
+                place = courses.get(i);
+            }
+        }
+
+        String[] names = new String[place.getForum().size()];
+
+        for(int i = 0; i < place.getForum().size(); i++)
+        {
+            names[i] = place.getForum().get(i).getMessage();
+        }
+
+        discDropdown = new JComboBox<String>(names);
+
+        center.add(discDropdown);
+        center.add(confirmDiscussionEdit2);
+
+
+        confirmDiscussionEdit2.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                removeListeners();
+                editDiscussion(course, discDropdown.getItemAt(discDropdown.getSelectedIndex()));
+
+            }
+        });
+
+        content.add(center);
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+
+    }
+
+    public void editDiscussion(String course, String discussion) {
+
+        frame.dispose();
+
+        frame = new JFrame("Discussion Creator");
+        content = frame.getContentPane();
+
+        JPanel center = new JPanel();
+
+        center.add(new JLabel(course));
+
+        passText.setText("");
+
+        center.add(passText);
+
+        center.add(confirmDiscussionEdit3);
+
+        content.add(center);
+
+        int index = 0;
+
         confirmDiscussionEdit3.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
-    	        
-    	    	
-    	        String message = passText.getText();
-    	        
-    	        for(int i = 0; i < courses.size(); i++)
-    	        {
-    	        	if(courses.get(i).getCourseName().equals(course))
-    	        	{
-    	        		for(int j = 0; j < courses.get(i).getForum().size(); j++)
-    	        		{
-    	        			if(courses.get(i).getForum().get(j).getMessage().equals(discussion))
-    	        			{
-    	        				courses.get(i).getForum().set(j, new Discussion(message));
-    	        				System.out.println(courses.get(i).getForum().get(j).getMessage());
-    	            	        removeListeners();
-    	        				mainMenu();
-    	        			}
-    	        		}
-    	        	}
-    	        }
-    	        
-    	    }
-    	});
-		
-		frame.setSize(600, 400);
-		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
-
-	}
-
-	public void deleteDiscussionMenu(){
-
-		frame.dispose();
-
-		frame = new JFrame("Delete Discussion");
-		content = frame.getContentPane();
-
-		JLabel discList = new JLabel("You currently have " + discussions.size() + " discussions.");
-		JPanel center = new JPanel();
-
-		center.add(discList);
-		center.add(deleteDisc);
-		center.add(deleteDiscussionButton);
-		center.add(backText);
-		center.add(goBack);
-
-		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
-		content.add(center);
-
-		frame.setSize(600, 400);
-		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
-
-		deleteDiscussionButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-    	        removeListeners();
-				deleteDiscussion();
-
-			}
-		});
-
-		goBack.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-    	        removeListeners();
-				mainMenu();
-				
-
-			}
-		});
+            public void actionPerformed(ActionEvent e) {
 
 
-	}
+                String message = passText.getText();
 
-	public void deleteDiscussion() {
-		frame.dispose();
+                for(int i = 0; i < courses.size(); i++)
+                {
+                    if(courses.get(i).getCourseName().equals(course))
+                    {
+                        for(int j = 0; j < courses.get(i).getForum().size(); j++)
+                        {
+                            if(courses.get(i).getForum().get(j).getMessage().equals(discussion))
+                            {
+                                try {
+                                    PrintWriter writer = new PrintWriter(socket.getOutputStream());
+                                    writer.println("Edit Discussion");
+                                    writer.flush();
+                                    writer.println(courses.get(i).getCourseName());
+                                    writer.flush();
+                                    writer.println("Teacher");
+                                    writer.flush();
+                                    writer.println(discussion);
+                                    writer.flush();
+                                    writer.println(message);
+                                    writer.flush();
 
-		frame = new JFrame("Delete Discussion");
-		content = frame.getContentPane();
+                                } catch (IOException ex) {
+                                    ex.printStackTrace();
+                                }
+                                courses.get(i).getForum().set(j, new Discussion(message));
 
-		JPanel center = new JPanel();
+                                removeListeners();
+                                mainMenu();
+                            }
+                        }
+                    }
+                }
 
-		center.add(deleteDiscPrompt);
+            }
+        });
 
-		center.add(passText);
-		center.add(confirm);
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
 
-		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
-		content.add(center);
+    }
+
+    public void deleteDiscussionMenu(){
+
+        frame.dispose();
+
+        frame = new JFrame("Delete Discussion");
+        content = frame.getContentPane();
+
+        JLabel discList = new JLabel("You currently have " + discussions.size() + " discussions.");
+        JPanel center = new JPanel();
+
+        center.add(discList);
+        center.add(deleteDisc);
+        center.add(deleteDiscussionButton);
+        center.add(backText);
+        center.add(goBack);
+
+        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+        content.add(center);
+
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+
+        deleteDiscussionButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                removeListeners();
+                deleteDiscussion();
+
+            }
+        });
+
+        goBack.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                removeListeners();
+                mainMenu();
 
 
-		passText.setText("");
+            }
+        });
 
 
-		confirm.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+    }
 
-				int discNum = Integer.parseInt(userText.getText());
+    public void deleteDiscussion() {
+        frame.dispose();
+
+        frame = new JFrame("Delete Discussion");
+        content = frame.getContentPane();
+
+        JPanel center = new JPanel();
+
+        center.add(deleteDiscPrompt);
+
+        center.add(passText);
+        center.add(confirm);
+
+        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+        content.add(center);
 
 
-				discussions.remove(discNum);
-    	        removeListeners();
-    	        mainMenu();
+        passText.setText("");
 
-			}
-		});
 
-		frame.setSize(600, 400);
-		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
+        confirm.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
 
-	}
-	
-	public void replyMenu()
-	{
-		
-		frame.dispose();
+                int discNum = Integer.parseInt(passText.getText());
+                for (Course c : courses) {
+                    for (Discussion d : c.getForum()) {
+                        discussions.add(d);
+                    }
+                }
 
-		frame = new JFrame("Reply Menu");
-		content = frame.getContentPane();
-		
-		JPanel center = new JPanel();
-		
-		String[] names = new String[courses.size()];
-		
-		for(int i = 0; i < courses.size(); i++)
-		{
-			names[i] = courses.get(i).getCourseName();
-		}
-		
-		courseDropdown = new JComboBox<String>(names);
-		
-		center.add(courseDropdown);
-		center.add(confirmReply);
-		
+                for (Course c : courses) {
+                    for (Discussion d : c.getForum()) {
+                        if (d.getMessage().equals(discussions.get(discNum).getMessage())) {
+                            discussions.get(discNum).setCourse(c.getCourseName());
+                        }
+                    }
+                }
 
-		
-		content.add(center);
-		
+                try {
+                    PrintWriter writer = new PrintWriter(socket.getOutputStream());
+                    writer.println("Delete Discussion");
+                    writer.flush();
+                    writer.println(discussions.get(discNum).getCourse());
+                    writer.flush();
+                    writer.println("Teacher");
+                    writer.flush();
+                    writer.println(discussions.get(discNum).getMessage());
+                    writer.flush();
+
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+
+                discussions.remove(discNum);
+                removeListeners();
+                mainMenu();
+
+            }
+        });
+
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+
+    }
+
+    public void replyMenu()
+    {
+
+        frame.dispose();
+
+        frame = new JFrame("Reply Menu");
+        content = frame.getContentPane();
+
+        JPanel center = new JPanel();
+
+        String[] names = new String[courses.size()];
+
+        for(int i = 0; i < courses.size(); i++)
+        {
+            names[i] = courses.get(i).getCourseName();
+        }
+
+        courseDropdown = new JComboBox<String>(names);
+
+        center.add(courseDropdown);
+        center.add(confirmReply);
+
+
+
+        content.add(center);
+
         confirmReply.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
-    	        
-    	        removeListeners();
-    	        replyPicker(courseDropdown.getItemAt(courseDropdown.getSelectedIndex()));
+            public void actionPerformed(ActionEvent e) {
 
-    	        
-    	    }
-    	});
-		
-		frame.setSize(600, 400);
-		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
-		
-	}
-	
-	public void replyPicker(String course)
-	{
-		
-		System.out.println("I'm running");
-		
-		frame.dispose();
+                removeListeners();
+                replyPicker(courseDropdown.getItemAt(courseDropdown.getSelectedIndex()));
 
-		frame = new JFrame("Reply Menu");
-		content = frame.getContentPane();
-		
-		JPanel center = new JPanel();
-		
-		Course discussions = null;
-		
-		for(int i = 0; i < courses.size(); i++)
-		{
-			if(courses.get(i).getCourseName().equals(course))
-			{
-				discussions = courses.get(i);
-			}
-		}
-		
-		final Course discussion = discussions;
-		
-		if(discussions != null)
-		{
 
-			System.out.println("This is running too");
-			String[] list = new String[discussions.getForum().size()];
-		
-			for(int i = 0; i < list.length; i++)
-			{
-				list[i] = discussions.getForum().get(i).getMessage();
-			}
-			
-			discDropdown = new JComboBox<String>(list);
-		}
-		center.add(new JLabel(course));
-		center.add(discDropdown);
-		center.add(confirmDiscussionReply);
-		
-		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
-		
-		
-		confirmDiscussionReply.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
+            }
+        });
 
-    	        removeListeners();
-    	        createReply(discussion, discussion.getForum().get(discDropdown.getSelectedIndex()));
-    	        
-    	    }
-    	});
-		
-		content.add(center);
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
 
-		frame.setSize(600, 400);
-		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
-		
-		
-		
-	}
-	
-	public void createReply(Course courses, Discussion discussion)
-	{
-		
-		System.out.println("I'm running");
-		
-		frame.dispose();
+    }
 
-		frame = new JFrame("Reply Menu");
-		content = frame.getContentPane();
-		
-		JPanel center = new JPanel();
-		
-		passText.setText("");
-		
-		center.add(passText);
-		center.add(confirm);
-		
-		confirm.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
+    public void replyPicker(String course)
+    {
 
-    	        removeListeners();
-    	        courses.getForum().get(courses.getForum().indexOf(discussion)).getReplyArray().add(new Reply(user, passText.getText()));
-    	        mainMenu();
-    	        
-    	    }
-    	});
-		
-	}
-	
-	
-	public void popularReplyCourse()
-	{
-		
-		frame.dispose();
+        System.out.println("I'm running");
 
-		frame = new JFrame("Reply Menu");
-		content = frame.getContentPane();
-		
-		JPanel center = new JPanel();
-		
-		String[] names = new String[courses.size()];
-		
-		for(int i = 0; i < courses.size(); i++)
-		{
-			names[i] = courses.get(i).getCourseName();
-		}
-		
-		courseDropdown = new JComboBox<String>(names);
-		
-		center.add(courseDropdown);
-		center.add(confirmReply);
-		
+        frame.dispose();
 
-		
-		content.add(center);
-		
+        frame = new JFrame("Reply Menu");
+        content = frame.getContentPane();
+
+        JPanel center = new JPanel();
+
+        Course discussions = null;
+
+        for(int i = 0; i < courses.size(); i++)
+        {
+            if(courses.get(i).getCourseName().equals(course))
+            {
+                discussions = courses.get(i);
+            }
+        }
+
+        final Course discussion = discussions;
+
+        if(discussions != null)
+        {
+
+            System.out.println("This is running too");
+            String[] list = new String[discussions.getForum().size()];
+
+            for(int i = 0; i < list.length; i++)
+            {
+                list[i] = discussions.getForum().get(i).getMessage();
+            }
+
+            discDropdown = new JComboBox<String>(list);
+        }
+        center.add(new JLabel(course));
+        center.add(discDropdown);
+        center.add(confirmDiscussionReply);
+
+        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+
+
+        confirmDiscussionReply.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                removeListeners();
+                createReply(discussion, discussion.getForum().get(discDropdown.getSelectedIndex()));
+
+            }
+        });
+
+        content.add(center);
+
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+
+
+
+    }
+
+    public void createReply(Course courses, Discussion discussion)
+    {
+
+        System.out.println("I'm running");
+
+        frame.dispose();
+
+        frame = new JFrame("Reply Menu");
+        content = frame.getContentPane();
+
+        JPanel center = new JPanel();
+
+        passText.setText("");
+
+        center.add(passText);
+        center.add(confirm);
+
+        confirm.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                removeListeners();
+                courses.getForum().get(courses.getForum().indexOf(discussion)).getReplyArray().add(new Reply(user, passText.getText()));
+                mainMenu();
+
+            }
+        });
+
+    }
+
+
+    public void popularReplyCourse()
+    {
+
+        frame.dispose();
+
+        frame = new JFrame("Reply Menu");
+        content = frame.getContentPane();
+
+        JPanel center = new JPanel();
+
+        String[] names = new String[courses.size()];
+
+        for(int i = 0; i < courses.size(); i++)
+        {
+            names[i] = courses.get(i).getCourseName();
+        }
+
+        courseDropdown = new JComboBox<String>(names);
+
+        center.add(courseDropdown);
+        center.add(confirmReply);
+
+
+
+        content.add(center);
+
         confirmReply.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
-    	        
-    	        removeListeners();
-    	        popularReplyDiscussion(courseDropdown.getItemAt(courseDropdown.getSelectedIndex()));
+            public void actionPerformed(ActionEvent e) {
 
-    	        
-    	    }
-    	});
-		
-		frame.setSize(600, 400);
-		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
-	}
-	
-	public void popularReplyDiscussion(String course)
-	{
-		System.out.println("I'm running");
-		
-		frame.dispose();
+                removeListeners();
+                popularReplyDiscussion(courseDropdown.getItemAt(courseDropdown.getSelectedIndex()));
 
-		frame = new JFrame("Reply Menu");
-		content = frame.getContentPane();
-		
-		JPanel center = new JPanel();
-		
-		Course discussions = null;
-		
-		for(int i = 0; i < courses.size(); i++)
-		{
-			if(courses.get(i).getCourseName().equals(course))
-			{
-				discussions = courses.get(i);
-			}
-		}
-		
-		final Course discussion = discussions;
-		
-		if(discussions != null)
-		{
 
-			System.out.println("This is running too");
-			String[] list = new String[discussions.getForum().size()];
-		
-			for(int i = 0; i < list.length; i++)
-			{
-				list[i] = discussions.getForum().get(i).getMessage();
-			}
-			
-			discDropdown = new JComboBox<String>(list);
-		}
-		center.add(new JLabel(course));
-		center.add(discDropdown);
-		center.add(confirmDiscussionReply);
-		
-		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
-		
-		
-		confirmDiscussionReply.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
+            }
+        });
 
-    	        removeListeners();
-    	        popularReply(discussion, discussion.getForum().get(discDropdown.getSelectedIndex()));
-    	        
-    	    }
-    	});
-		
-		content.add(center);
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
 
-		frame.setSize(600, 400);
-		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
-	}
-	
-	public void popularReply(Course discussion, Discussion forum)
-	{
-		frame.dispose();
+    public void popularReplyDiscussion(String course)
+    {
+        System.out.println("I'm running");
 
-		frame = new JFrame("Reply Menu");
-		content = frame.getContentPane();
-		
-		JPanel center = new JPanel();
-		
-		
-		if(discussion.getForum().get(discussion.getForum().indexOf(forum)).getReplyArray().size() <= 0)
-		{
-			JOptionPane.showInternalMessageDialog(null, "Discussion has no replies", "Action Failed",
+        frame.dispose();
+
+        frame = new JFrame("Reply Menu");
+        content = frame.getContentPane();
+
+        JPanel center = new JPanel();
+
+        Course discussions = null;
+
+        for(int i = 0; i < courses.size(); i++)
+        {
+            if(courses.get(i).getCourseName().equals(course))
+            {
+                discussions = courses.get(i);
+            }
+        }
+
+        final Course discussion = discussions;
+
+        if(discussions != null)
+        {
+
+            System.out.println("This is running too");
+            String[] list = new String[discussions.getForum().size()];
+
+            for(int i = 0; i < list.length; i++)
+            {
+                list[i] = discussions.getForum().get(i).getMessage();
+            }
+
+            discDropdown = new JComboBox<String>(list);
+        }
+        center.add(new JLabel(course));
+        center.add(discDropdown);
+        center.add(confirmDiscussionReply);
+
+        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+
+
+        confirmDiscussionReply.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                removeListeners();
+                popularReply(discussion, discussion.getForum().get(discDropdown.getSelectedIndex()));
+
+            }
+        });
+
+        content.add(center);
+
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+
+    public void popularReply(Course discussion, Discussion forum)
+    {
+        frame.dispose();
+
+        frame = new JFrame("Reply Menu");
+        content = frame.getContentPane();
+
+        JPanel center = new JPanel();
+
+
+        if(discussion.getForum().get(discussion.getForum().indexOf(forum)).getReplyArray().size() <= 0)
+        {
+            JOptionPane.showInternalMessageDialog(null, "Discussion has no replies", "Action Failed",
                     JOptionPane.ERROR_MESSAGE);
-		} else
-		{
-			Reply reply = discussion.getForum().get(discussion.getForum().indexOf(forum)).getReplyArray().get(0);
-			
-			for(int i = 0; i < discussion.getForum().get(discussion.getForum().indexOf(forum)).getReplyArray().size(); i++)
-			{
-				if(reply.getVotes() < discussion.getForum().get(discussion.getForum().indexOf(forum)).getReplyArray().get(i).getVotes())
-				{
-					reply = discussion.getForum().get(discussion.getForum().indexOf(forum)).getReplyArray().get(i);
-				}
-			}
-			
-			center.add(new JLabel(reply.message));
-		}
-		
-		center.add(goBack);
+        } else
+        {
+            Reply reply = discussion.getForum().get(discussion.getForum().indexOf(forum)).getReplyArray().get(0);
 
-		
-		goBack.addActionListener(new ActionListener() {
-    	    public void actionPerformed(ActionEvent e) {
+            for(int i = 0; i < discussion.getForum().get(discussion.getForum().indexOf(forum)).getReplyArray().size(); i++)
+            {
+                if(reply.getVotes() < discussion.getForum().get(discussion.getForum().indexOf(forum)).getReplyArray().get(i).getVotes())
+                {
+                    reply = discussion.getForum().get(discussion.getForum().indexOf(forum)).getReplyArray().get(i);
+                }
+            }
 
-    	        removeListeners();
-    	        mainMenu();
-    	        
-    	    }
-    	});
-		
-		content.add(center);
+            center.add(new JLabel(reply.message));
+        }
 
-		frame.setSize(600, 400);
-		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
-	}
-	
-	
-	
-	public void removeListeners()
-	{
-		for(int i = 0; i < buttons.size(); i++)
-		{
-			try {
-				if(buttons.get(i).getActionListeners().length > 0)
-				{
-					buttons.get(i).removeActionListener(buttons.get(i).getActionListeners()[0]);
-				}
-			} catch (NullPointerException e)
-			{
-				
-			}
-		}
-	}
+        center.add(goBack);
+
+
+        goBack.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                removeListeners();
+                mainMenu();
+
+            }
+        });
+
+        content.add(center);
+
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+
+
+
+    public void removeListeners()
+    {
+        for(int i = 0; i < buttons.size(); i++)
+        {
+            try {
+                if(buttons.get(i).getActionListeners().length > 0)
+                {
+                    buttons.get(i).removeActionListener(buttons.get(i).getActionListeners()[0]);
+                }
+            } catch (NullPointerException e)
+            {
+
+            }
+        }
+    }
 }
