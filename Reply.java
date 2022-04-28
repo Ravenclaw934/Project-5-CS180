@@ -31,16 +31,16 @@ public class Reply implements Post, Serializable
 	}
 
 	@Override
-	public String getMessage() throws ActionFailedException {
+	public String getMessage(){
 		return message;
 	}
 
 	@Override
-	public User getPoster() throws ActionFailedException {
+	public User getPoster(){
 		return poster;
 	}
 
-	public int getVotes() throws ActionFailedException
+	public int getVotes()
 	{
 		return votes;
 	}

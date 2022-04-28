@@ -1,5 +1,4 @@
 import java.io.*;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -749,7 +748,11 @@ public class ServerThread implements Runnable {
                     }
                 }
                 pw.println(user + "," + reply + "," + "0");
-                pw.println("-");
+                if (newI + 1 == lines.size()) {
+                    pw.print("-");
+                } else {
+                    pw.println("-");
+                }
                 for (int i = newI + 1; i < lines.size(); i++) {
                     if (i == lines.size() - 1) {
                         pw.print(lines.get(i));

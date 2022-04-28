@@ -37,6 +37,8 @@ public class TeacherGUI extends JComponent implements Runnable {
 
     public Teacher user;
 
+    public boolean refreshAgain = true;
+
 
     // General variables for the GUI
     public ArrayList<Student> students = new ArrayList<Student>();
@@ -344,6 +346,31 @@ public class TeacherGUI extends JComponent implements Runnable {
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+
+        if (refreshAgain) {
+            try {
+                PrintWriter writer = new PrintWriter(socket.getOutputStream());
+
+                writer.println("Login");
+                writer.flush();
+                ArrayList<Student> newStud = (ArrayList<Student>) ois.readObject();
+                ArrayList<Teacher> newTeach = (ArrayList<Teacher>) ois.readObject();
+                ArrayList<Course> newCor = (ArrayList<Course>) ois.readObject();
+                students = newStud;
+                teachers = newTeach;
+                courses = newCor;
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            discussions = new ArrayList<>();
+            for (Course c : courses) {
+                for (Discussion d : c.getForum()) {
+                    discussions.add(d);
+                }
+            }
+        }
 
         account.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -1234,38 +1261,52 @@ public class TeacherGUI extends JComponent implements Runnable {
 
         confirm.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
-                int discNum = Integer.parseInt(passText.getText());
-                for (Course c : courses) {
-                    for (Discussion d : c.getForum()) {
-                        discussions.add(d);
-                    }
-                }
-
-                for (Course c : courses) {
-                    for (Discussion d : c.getForum()) {
-                        if (d.getMessage().equals(discussions.get(discNum).getMessage())) {
-                            discussions.get(discNum).setCourse(c.getCourseName());
-                        }
-                    }
-                }
+                int discNum = -1;
 
                 try {
-                    PrintWriter writer = new PrintWriter(socket.getOutputStream());
-                    writer.println("Delete Discussion");
-                    writer.flush();
-                    writer.println(discussions.get(discNum).getCourse());
-                    writer.flush();
-                    writer.println("Teacher");
-                    writer.flush();
-                    writer.println(discussions.get(discNum).getMessage());
-                    writer.flush();
-
-                } catch (IOException ex) {
-                    ex.printStackTrace();
+                    discNum = Integer.parseInt(passText.getText());
+                    if (discNum < 0 || discNum >= discussions.size()) {
+                        discNum = -1;
+                        throw new NumberFormatException();
+                    }
+                } catch (NumberFormatException exc) {
+                    JOptionPane.showMessageDialog(null,
+                            "Please Enter a Valid Index between 0 and " + (discussions.size() - 1),
+                            "Deletion Error", JOptionPane.ERROR_MESSAGE);
                 }
 
-                discussions.remove(discNum);
+                if (discNum >= 0 && discNum < discussions.size()) {
+                    for (Course c : courses) {
+                        for (Discussion d : c.getForum()) {
+                            discussions.add(d);
+                        }
+                    }
+
+                    for (Course c : courses) {
+                        for (Discussion d : c.getForum()) {
+                            if (d.getMessage().equals(discussions.get(discNum).getMessage())) {
+                                discussions.get(discNum).setCourse(c.getCourseName());
+                            }
+                        }
+                    }
+
+                    try {
+                        PrintWriter writer = new PrintWriter(socket.getOutputStream());
+                        writer.println("Delete Discussion");
+                        writer.flush();
+                        writer.println(discussions.get(discNum).getCourse());
+                        writer.flush();
+                        writer.println("Teacher");
+                        writer.flush();
+                        writer.println(discussions.get(discNum).getMessage());
+                        writer.flush();
+
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+
+                    discussions.remove(discNum);
+                }
                 removeListeners();
                 mainMenu();
 
@@ -1425,6 +1466,8 @@ public class TeacherGUI extends JComponent implements Runnable {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
+
+                refreshAgain = false;
 
                 removeListeners();
                 mainMenu();

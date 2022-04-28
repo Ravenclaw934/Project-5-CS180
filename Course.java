@@ -5,12 +5,27 @@ public class Course implements Serializable
 {
 
 	ArrayList<Discussion> forum;
+	Teacher teacher;
 	String name;
 
 	public Course(String name) // Constructor for creating courses
 	{
 		this.name = name;
 		forum = new ArrayList<Discussion>();
+	}
+
+	public Course(String name, Teacher teacher)
+	{
+		this.name = name;
+		this.teacher = teacher;
+		forum = new ArrayList<Discussion>();
+	}
+
+	public Course(String name, Teacher teacher, ArrayList<Discussion> forum)
+	{
+		this.name = name;
+		this.teacher = teacher;
+		this.forum = forum;
 	}
 
 	public Course(String name, ArrayList<Discussion> forum) // Constructor for importing courses
