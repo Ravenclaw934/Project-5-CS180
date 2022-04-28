@@ -97,6 +97,7 @@ public class StudentGUI extends JComponent implements Runnable {
                     ArrayList<Student> newStud = (ArrayList<Student>) ois.readObject();
                     ArrayList<Teacher> newTeach = (ArrayList<Teacher>) ois.readObject();
                     ArrayList<Course> newCor = (ArrayList<Course>) ois.readObject();
+                    System.out.println("Info refreshed");
                     students = newStud;
                     teachers = newTeach;
                     courseList = newCor;
@@ -118,6 +119,7 @@ public class StudentGUI extends JComponent implements Runnable {
                     }
                 }
                 displayCourse(currentCourse, frame.getContentPane());
+                System.out.println(currentCourse.getCourseName());
             }
             if (e.getSource() == accountButton) {
                 displayAccount(frame.getContentPane());
@@ -132,6 +134,7 @@ public class StudentGUI extends JComponent implements Runnable {
 
                 try {
                     if (currentCourse != null) {
+                        System.out.println("COURSE EXISTS!!");
                     }
                     for (int i = 0; i < currentCourse.getForum().size(); i++) {
                         if (selectDiscName.equals(currentCourse.getForum().get(i).getMessage())) {
@@ -140,6 +143,7 @@ public class StudentGUI extends JComponent implements Runnable {
                     }
                     displayDisc(selectDisc, frame.getContentPane());
                 } catch (NullPointerException nul) {
+                    System.out.println("Null");
                     nul.printStackTrace();
                 }
             }
@@ -265,6 +269,7 @@ public class StudentGUI extends JComponent implements Runnable {
         discussionLayout.add(replyDisp);
         replyOptions.add(addReply);
         replyOptions.add(fileReply);
+        replyOptions.add(editDeleteRep);
         content.add(discussionLayout, BorderLayout.CENTER);
         content.add(replyOptions, BorderLayout.EAST);
         frame.setSize(600, 400);
@@ -290,64 +295,6 @@ public class StudentGUI extends JComponent implements Runnable {
                 //}
             }
         });
-        editDeleteRep.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                editDelRep(discussion);
-            }
-        });
-
-    }
-
-    public void editDelRep(Discussion current) {
-
-        ArrayList<Reply> replies = current.getReplyArray();
-        ArrayList<Reply> studentReps = new ArrayList<>();
-
-        for (Reply r : replies) {
-            if (r.getPoster().getUsername().equals(username)){
-                studentReps.add(r);
-            }
-        }
-        if (studentReps.size() == 0) {
-            JOptionPane.showMessageDialog(null, "Error! You can only edit or delete your own discussions!", "Discussion Update",
-                    JOptionPane.ERROR_MESSAGE);
-        } else {
-            frame.dispose();
-            content = frame.getContentPane();
-            content.add(jpaneltop);
-            JPanel editDel = new JPanel();
-            String[] studentRepsArray = new String[studentReps.size()];
-
-            for (int i = 0; i < studentReps.size(); i++) {
-                studentRepsArray[i] = studentReps.get(i).getMessage();
-            }
-            repDropdown = new JComboBox(studentRepsArray);
-            editDel.add(repDropdown);
-            editDel.add(deleteRep);
-            editDel.add(editRep);
-            content.add(editDel);
-
-            deleteRep.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    PrintWriter writer = null;
-                    try {
-                        writer = new PrintWriter(socket.getOutputStream());
-                        writer.println("New Reply");
-                        writer.flush();
-                        writer.println(current.getCourse());
-                        writer.flush();
-                        writer.println(current.getMessage());
-                        writer.flush();
-                        writer.println(student.getUsername());
-                        writer.flush();
-                        //writer.println(newRep.getMessage());
-                        // writer.flush();
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            });
-        }
     }
 
     public void fileSelect(Discussion current) {
@@ -388,7 +335,7 @@ public class StudentGUI extends JComponent implements Runnable {
                 writer.flush();
                 writer.println(student.getUsername());
                 writer.flush();
-                writer.println(fRep);
+                writer.println(newRep.getMessage());
                 writer.flush();
 
                 courseList = (ArrayList<Course>) ois.readObject();
@@ -397,6 +344,7 @@ public class StudentGUI extends JComponent implements Runnable {
                 ex.printStackTrace();
             }
 
+            System.out.println("Back to discussion page");
 
             displayDisc(current, content);
 
@@ -461,16 +409,19 @@ public class StudentGUI extends JComponent implements Runnable {
                     writer.flush();
                     writer.println(newRep.getMessage());
                     writer.flush();
+                    System.out.println("356");
 
                     courseList = (ArrayList<Course>) ois.readObject();
 
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
+                System.out.println("362");
 
                 for (ActionListener a : confirm.getActionListeners()) {
                     confirm.removeActionListener(a);
                 }
+                System.out.println("Back to discussion page");
 
                 displayDisc(current, content);
             }
@@ -769,6 +720,7 @@ public class StudentGUI extends JComponent implements Runnable {
             discChoice.add(viewReplyButton);
             content.add(discChoice,BorderLayout.CENTER);
         } catch (Exception e) {
+            System.out.println("Null");
             e.printStackTrace();
         }
         frame.setSize(600, 400);
