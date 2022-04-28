@@ -131,6 +131,22 @@ public class ServerThread implements Runnable {
 
                     gradeStudent(user, grade);
                 }
+                if (request.equals("Import Discussion")) {
+                    ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+                    ArrayList<String> lines = (ArrayList<String>) ois.readObject();
+
+                    importDiscussion(lines);
+                }
+                if (request.equals("Import Reply")) {
+                    String course = reader.readLine();
+                    String teacher = reader.readLine();
+                    String discussion = reader.readLine();
+
+                    ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+                    ArrayList<String> lines = (ArrayList<String>) ois.readObject();
+
+                    importReply(lines, course, teacher, discussion);
+                }
             }
 
         } catch (Exception e) {
@@ -909,8 +925,16 @@ public class ServerThread implements Runnable {
                 File f = new File(COURSE_FILE);
                 FileOutputStream fos = new FileOutputStream(f, true);
                 PrintWriter pw = new PrintWriter(fos);
+
+                boolean started = false;
+                pw.println();
                 for (String s : lines) {
-                    pw.println(s);
+                    if (!started) {
+                        pw.print(s);
+                        started = true;
+                    } else {
+                        pw.print("\n" + s);
+                    }
                 }
 
                 pw.close();

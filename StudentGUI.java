@@ -346,7 +346,7 @@ public class StudentGUI extends JComponent implements Runnable {
                         writer.println(student.getUsername());
                         writer.flush();
                         //writer.println(newRep.getMessage());
-                       // writer.flush();
+                        // writer.flush();
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
@@ -356,45 +356,47 @@ public class StudentGUI extends JComponent implements Runnable {
     }
 
     public void fileSelect(Discussion current) {
-        String filename = JOptionPane.showInputDialog(null, "Please enter the filename", "University Card", JOptionPane.QUESTION_MESSAGE);
-        String fRep = "";
+        String filename = JOptionPane.showInputDialog(null,
+                "Please enter the filename", "File Import", JOptionPane.QUESTION_MESSAGE);
+        ArrayList<String> lines = new ArrayList<>();
         try {
             File f = new File(filename);
-            BufferedReader bfr = new BufferedReader(new FileReader(f));
-            String line = bfr.readLine();
+            FileReader fr = new FileReader(f);
+            BufferedReader bfr = new BufferedReader(fr);
 
-            while (line != null) {
-                fRep += line;
-                line = bfr.readLine();
+            while (true) {
+                String s = bfr.readLine();
+                if (s == null) {
+                    break;
+                }
+                lines.add(s);
             }
+            bfr.close();
 
-            Reply newRep = new Reply(student, fRep);
-            ArrayList<Reply> temp = current.getReplyArray();
-            temp.add(newRep);
-            current.setReplies(temp);
+            Discussion tempDisc = new Discussion("", "");
 
             try {
                 for (Course c : courseList) {
                     for (Discussion d : c.getForum()) {
                         if (d.getMessage().equals(current.message)) {
                             current.setCourse(c.getCourseName());
+                            tempDisc = d;
                         }
                     }
                 }
 
                 PrintWriter writer = new PrintWriter(socket.getOutputStream());
-                writer.println("New Reply");
+                writer.println("Import Reply");
                 writer.flush();
-                writer.println(current.getCourse());
+                writer.println(tempDisc.getCourse());
                 writer.flush();
                 writer.println("Teacher");
                 writer.flush();
-                writer.println(current.getMessage());
+                writer.println(tempDisc.getMessage());
                 writer.flush();
-                writer.println(student.getUsername());
-                writer.flush();
-                writer.println(newRep.getMessage());
-                writer.flush();
+                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+                oos.writeObject(lines);
+                oos.flush();
 
                 courseList = (ArrayList<Course>) ois.readObject();
 

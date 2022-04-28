@@ -3,13 +3,7 @@ import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -1595,11 +1589,11 @@ public class TeacherGUI extends JComponent implements Runnable {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
-    
-    
+
+
     public void importDiscussion()
     {
-    	
+
         frame.dispose();
 
         frame = new JFrame("Reply Menu");
@@ -1619,45 +1613,60 @@ public class TeacherGUI extends JComponent implements Runnable {
         center.add(courseDropdown);
         center.add(passText);
         center.add(confirmReply);
-        
+
         confirmReply.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
-            	try {
-            		File f = new File(passText.getText());
-            		FileReader fr = new FileReader(f);
-            		BufferedReader bfr = new BufferedReader(fr);
-            		
-            		String test = "";
-            		String message = "";
-            		
-            		while((test = bfr.readLine()) != null)
-            		{
-            			message = message + test;
-            		}
-            		String courseName = courseDropdown.getItemAt(courseDropdown.getSelectedIndex());
-            		//put server stuff here
-            		
-                    removeListeners();
-                    mainMenu();
-            		
-            	} catch (FileNotFoundException e)
-            	{
-                    JOptionPane.showInternalMessageDialog(null, "File provided does not exist!", "Import Error!",
-                            JOptionPane.ERROR_MESSAGE);
-            	}
+                ArrayList<String> lines = new ArrayList<>();
+                try {
+                    File f = new File(passText.getText());
+                    FileReader fr = new FileReader(f);
+                    BufferedReader bfr = new BufferedReader(fr);
+
+                    while (true) {
+                        String s = bfr.readLine();
+                        if (s == null) {
+                            break;
+                        }
+                        lines.add(s);
+                    }
+                    bfr.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                String courseName = courseDropdown.getItemAt(courseDropdown.getSelectedIndex());
+                //put server stuff here
+                for (String s : lines) {
+                    System.out.println(s);
+                }
+
+                try {
+                    PrintWriter writer = new PrintWriter(socket.getOutputStream());
+                    writer.println("Import Discussion");
+                    writer.flush();
+                    ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+                    oos.writeObject(lines);
+                    oos.flush();
+
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+
+                removeListeners();
+                mainMenu();
+
 
             }
         });
 
-    	
+
         content.add(center);
 
         frame.setSize(600, 400);
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-    	
+
     }
 
 
