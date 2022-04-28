@@ -137,16 +137,6 @@ public class ServerThread implements Runnable {
 
                     importDiscussion(lines);
                 }
-                if (request.equals("Import Reply")) {
-                    String course = reader.readLine();
-                    String teacher = reader.readLine();
-                    String discussion = reader.readLine();
-
-                    ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-                    ArrayList<String> lines = (ArrayList<String>) ois.readObject();
-
-                    importReply(lines, course, teacher, discussion);
-                }
             }
 
         } catch (Exception e) {

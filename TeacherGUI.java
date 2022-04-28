@@ -331,7 +331,6 @@ public class TeacherGUI extends JComponent implements Runnable {
 
         right.add(replyText);
         right.add(reply);
-        right.add(popularReply);
 
         left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
         center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
@@ -1326,7 +1325,6 @@ public class TeacherGUI extends JComponent implements Runnable {
     public void replyPicker(String course)
     {
 
-        System.out.println("I'm running");
 
         frame.dispose();
 
@@ -1350,7 +1348,6 @@ public class TeacherGUI extends JComponent implements Runnable {
         if(discussions != null)
         {
 
-            System.out.println("This is running too");
             String[] list = new String[discussions.getForum().size()];
 
             for(int i = 0; i < list.length; i++)
@@ -1390,7 +1387,6 @@ public class TeacherGUI extends JComponent implements Runnable {
     public void createReply(Course courses, Discussion discussion)
     {
 
-        System.out.println("I'm running");
 
         frame.dispose();
 
@@ -1436,6 +1432,12 @@ public class TeacherGUI extends JComponent implements Runnable {
             }
         });
 
+        content.add(center);
+
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
     }
 
 
@@ -1483,7 +1485,6 @@ public class TeacherGUI extends JComponent implements Runnable {
 
     public void popularReplyDiscussion(String course)
     {
-        System.out.println("I'm running");
 
         frame.dispose();
 
@@ -1507,7 +1508,6 @@ public class TeacherGUI extends JComponent implements Runnable {
         if(discussions != null)
         {
 
-            System.out.println("This is running too");
             String[] list = new String[discussions.getForum().size()];
 
             for(int i = 0; i < list.length; i++)
@@ -1636,9 +1636,6 @@ public class TeacherGUI extends JComponent implements Runnable {
                 }
                 String courseName = courseDropdown.getItemAt(courseDropdown.getSelectedIndex());
                 //put server stuff here
-                for (String s : lines) {
-                    System.out.println(s);
-                }
 
                 try {
                     PrintWriter writer = new PrintWriter(socket.getOutputStream());
