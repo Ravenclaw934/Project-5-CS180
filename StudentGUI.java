@@ -1,10 +1,8 @@
 import javax.swing.*;
+import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.EventListener;
@@ -94,8 +92,27 @@ public class StudentGUI extends JComponent implements Runnable {
     ActionListener actionListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (e.getSource() == discussionButton) {
+            if (e.getSource() == refresh) {
+                try {
+                    PrintWriter writer = new PrintWriter(socket.getOutputStream());
 
+                    writer.println("Login");
+                    writer.flush();
+                    ArrayList<Student> newStud = (ArrayList<Student>) ois.readObject();
+                    ArrayList<Teacher> newTeach = (ArrayList<Teacher>) ois.readObject();
+                    ArrayList<Course> newCor = (ArrayList<Course>) ois.readObject();
+                    System.out.println("Info refreshed");
+                    students = newStud;
+                    teachers = newTeach;
+                    courseList = newCor;
+
+                    frame.dispose();
+                    mainPageDisplay();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                } catch (ClassNotFoundException ex) {
+                    ex.printStackTrace();
+                }
             }
             if (e.getSource() == courseButton) {
                 String selectCourseName = courseDropdown.getItemAt(courseDropdown.getSelectedIndex());
@@ -133,9 +150,6 @@ public class StudentGUI extends JComponent implements Runnable {
                     System.out.println("Null");
                     nul.printStackTrace();
                 }
-            }
-            if (e.getSource() == fileImport) {
-                fileSelect();
             }
         }
     };
@@ -208,6 +222,7 @@ public class StudentGUI extends JComponent implements Runnable {
 
         jpaneltop = new JPanel();
 
+        refresh.addActionListener(actionListener);
         courseButton = new JButton("See Course");
         courseDropdown = new JComboBox<>(courseNames);
         courseButton.addActionListener(actionListener);
@@ -245,11 +260,7 @@ public class StudentGUI extends JComponent implements Runnable {
         String allReplies = "";
         for (int i = 0; i < discussion.getReplies(); i++) {
             replies[i] = discussion.getReplyArray().get(i);
-            try {
-                allReplies += "<html>" + replies[i].getPoster().getUsername() + ": " + replies[i].getMessage() + "<br>";
-            } catch (ActionFailedException e) {
-                e.printStackTrace();
-            }
+            allReplies += "<html>" + replies[i].getPoster().getUsername() + ": " + replies[i].getMessage() + "<br>";
         }
         allReplies += "</html>";
 
@@ -273,15 +284,87 @@ public class StudentGUI extends JComponent implements Runnable {
         addReply.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 newReplyFrame(discussion);
+                for (ActionListener a : addReply.getActionListeners()) {
+                    addReply.removeActionListener(a);
+                }
+            }
+        });
+
+        fileReply.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                fileSelect(discussion);
+                //for (ActionListener a : fileReply.getActionListeners()) {
+                //    fileReply.removeActionListener(a);
+                //}
             }
         });
 
     }
 
-    public void fileSelect() {
+    public void fileSelect(Discussion current) {
         fileImport = new JFileChooser();
         fileImport.setDialogTitle("Pick Reply File");
-        File file = fileImport.getSelectedFile();
+        String fRep = null;
+
+        fileImport = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+        int returnValue = fileImport.showOpenDialog(null);
+
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            File f = fileImport.getSelectedFile();
+            try {
+                BufferedReader bfr = new BufferedReader(new FileReader(f));
+                String line = bfr.readLine();
+
+                while (line != null) {
+                    fRep += line;
+                    line = bfr.readLine();
+                }
+
+                Reply newRep = new Reply(student, fRep);
+                ArrayList<Reply> temp = current.getReplyArray();
+                temp.add(newRep);
+                current.setReplies(temp);
+
+                try {
+                    for (Course c : courseList) {
+                        for (Discussion d : c.getForum()) {
+                            if (d.getMessage().equals(current.message)) {
+                                current.setCourse(c.getCourseName());
+                            }
+                        }
+                    }
+
+                    PrintWriter writer = new PrintWriter(socket.getOutputStream());
+                    writer.println("New Reply");
+                    writer.flush();
+                    writer.println(current.getCourse());
+                    writer.flush();
+                    writer.println("Teacher");
+                    writer.flush();
+                    writer.println(current.getMessage());
+                    writer.flush();
+                    writer.println(student.getUsername());
+                    writer.flush();
+                    writer.println(newRep.getMessage());
+                    writer.flush();
+
+                    courseList = (ArrayList<Course>) ois.readObject();
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
+                System.out.println("Back to discussion page");
+
+                displayDisc(current, content);
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     public void newReplyFrame(Discussion current) {
@@ -656,15 +739,6 @@ public class StudentGUI extends JComponent implements Runnable {
 
     }
 
-    public void closePage(Container conten) {
-
-        try {
-            //System.exit(0);
-            frame.dispose();
-        } catch (NullPointerException nul) {
-            System.out.println("Null on close");
-        }
-    }
 
     public StudentGUI(Student student, ArrayList<Course> courseList) {
         this.student = student;
@@ -675,19 +749,7 @@ public class StudentGUI extends JComponent implements Runnable {
         }
         this.courseNames = courseNames;
     }
-
-    /*public StudentGUI() {
-        testDiscs = new ArrayList<>();
-    }*/
-
-    public StudentGUI(ArrayList<Course> courseList) {
-        courseNames = new String[courseList.size()];
-        for (int i = 0; i < courseList.size(); i++) {
-            courseNames[i] = courseList.get(i).getCourseName();
-        }
-        this.courseNames= courseNames;
-        testDiscs = new ArrayList<>();
-    }
+    
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new StudentGUI());
