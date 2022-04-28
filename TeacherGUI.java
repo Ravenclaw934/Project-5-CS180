@@ -3,6 +3,10 @@ import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
@@ -423,7 +427,7 @@ public class TeacherGUI extends JComponent implements Runnable {
         importDiscussion.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 removeListeners();
-
+                importDiscussion();
 
 
             }
@@ -1590,6 +1594,70 @@ public class TeacherGUI extends JComponent implements Runnable {
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+    }
+    
+    
+    public void importDiscussion()
+    {
+    	
+        frame.dispose();
+
+        frame = new JFrame("Reply Menu");
+        content = frame.getContentPane();
+
+        JPanel center = new JPanel();
+
+        String[] names = new String[courses.size()];
+
+        for(int i = 0; i < courses.size(); i++)
+        {
+            names[i] = courses.get(i).getCourseName();
+        }
+
+        courseDropdown = new JComboBox<String>(names);
+
+        center.add(courseDropdown);
+        center.add(passText);
+        center.add(confirmReply);
+        
+        confirmReply.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+            	try {
+            		File f = new File(passText.getText());
+            		FileReader fr = new FileReader(f);
+            		BufferedReader bfr = new BufferedReader(fr);
+            		
+            		String test = "";
+            		String message = "";
+            		
+            		while((test = bfr.readLine()) != null)
+            		{
+            			message = message + test;
+            		}
+            		String courseName = courseDropdown.getItemAt(courseDropdown.getSelectedIndex());
+            		//put server stuff here
+            		
+                    removeListeners();
+                    mainMenu();
+            		
+            	} catch (FileNotFoundException e)
+            	{
+                    JOptionPane.showInternalMessageDialog(null, "File provided does not exist!", "Import Error!",
+                            JOptionPane.ERROR_MESSAGE);
+            	}
+
+            }
+        });
+
+    	
+        content.add(center);
+
+        frame.setSize(600, 400);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    	
     }
 
 
