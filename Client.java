@@ -4,13 +4,20 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 public class Client {
 
     public static void main(String[] args) {
         try {
-            Socket socket = new Socket("localhost", 2222);
+            String hostname = JOptionPane.showInputDialog(null, "Please enter the ip of the server " +
+                            "(localhost if running the server locally)", "Setting up", JOptionPane.QUESTION_MESSAGE);
+            if (hostname.equals("")) {
+                throw new UnknownHostException();
+            }
+
+            Socket socket = new Socket(hostname, 2222);
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
             PrintWriter writer = new PrintWriter(socket.getOutputStream());
 
@@ -52,6 +59,9 @@ public class Client {
                 t.start();
             }
 
+        } catch (UnknownHostException e) {
+            JOptionPane.showMessageDialog(null, "Unknown host!", "Unknown Host Exception",
+                    JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             e.printStackTrace();
         }
