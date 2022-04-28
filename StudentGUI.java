@@ -41,6 +41,10 @@ public class StudentGUI extends JComponent implements Runnable {
     public JPanel jpaneltop;
     public JLabel replyDisp;
     public JButton editDeleteRep = new JButton("Edit or Delete a Reply");
+    public JComboBox repDropdown;
+    public JButton editRep = new JButton("Edit this reply");
+    public JButton deleteRep = new JButton("Delete this reply");
+
 
     Socket socket;
     ObjectInputStream ois;
@@ -293,14 +297,66 @@ public class StudentGUI extends JComponent implements Runnable {
         });
         editDeleteRep.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
+                editDelRep(discussion);
             }
         });
 
     }
 
+    public void editDelRep(Discussion current) {
+
+        ArrayList<Reply> replies = current.getReplyArray();
+        ArrayList<Reply> studentReps = new ArrayList<>();
+
+        for (Reply r : replies) {
+            if (r.getPoster().getUsername().equals(username)){
+                studentReps.add(r);
+            }
+        }
+        if (studentReps.size() == 0) {
+            JOptionPane.showMessageDialog(null, "Error! You can only edit or delete your own discussions!", "Discussion Update",
+                    JOptionPane.ERROR_MESSAGE);
+        } else {
+            frame.dispose();
+            content = frame.getContentPane();
+            content.add(jpaneltop);
+            JPanel editDel = new JPanel();
+            String[] studentRepsArray = new String[studentReps.size()];
+
+            for (int i = 0; i < studentReps.size(); i++) {
+                studentRepsArray[i] = studentReps.get(i).getMessage();
+            }
+            repDropdown = new JComboBox(studentRepsArray);
+            editDel.add(repDropdown);
+            editDel.add(deleteRep);
+            editDel.add(editRep);
+            content.add(editDel);
+
+            deleteRep.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    PrintWriter writer = null;
+                    try {
+                        writer = new PrintWriter(socket.getOutputStream());
+                        writer.println("New Reply");
+                        writer.flush();
+                        writer.println(current.getCourse());
+                        writer.flush();
+                        writer.println(current.getMessage());
+                        writer.flush();
+                        writer.println(student.getUsername());
+                        writer.flush();
+                        //writer.println(newRep.getMessage());
+                       // writer.flush();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
+        }
+    }
+
     public void fileSelect(Discussion current) {
-        String filename = JOptionPane.showInputDialog(null, "What is your email?", "University Card", JOptionPane.QUESTION_MESSAGE);
+        String filename = JOptionPane.showInputDialog(null, "Please enter the filename", "University Card", JOptionPane.QUESTION_MESSAGE);
         String fRep = "";
         try {
             File f = new File(filename);
@@ -351,7 +407,8 @@ public class StudentGUI extends JComponent implements Runnable {
             displayDisc(current, content);
 
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error! File does not exist!", "File Upload",
+                    JOptionPane.ERROR_MESSAGE);
         } catch (IOException e) {
             e.printStackTrace();
         }
