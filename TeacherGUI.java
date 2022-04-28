@@ -1409,8 +1409,30 @@ public class TeacherGUI extends JComponent implements Runnable {
         confirm.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
+                Reply tempReply = new Reply(user, passText.getText());
+                courses.getForum().get(courses.getForum().indexOf(discussion))
+                        .getReplyArray().add(tempReply);
+
+                try {
+                    PrintWriter writer = new PrintWriter(socket.getOutputStream());
+                    writer.println("New Reply");
+                    writer.flush();
+                    writer.println(courses.getCourseName());
+                    writer.flush();
+                    writer.println("Teacher");
+                    writer.flush();
+                    writer.println(courses.getForum().get(courses.getForum().indexOf(discussion)).getMessage());
+                    writer.flush();
+                    writer.println(user.getUsername());
+                    writer.flush();
+                    writer.println(tempReply.getMessage());
+                    writer.flush();
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
                 removeListeners();
-                courses.getForum().get(courses.getForum().indexOf(discussion)).getReplyArray().add(new Reply(user, passText.getText()));
                 mainMenu();
 
             }
