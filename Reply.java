@@ -1,5 +1,16 @@
 import java.io.Serializable;
 
+/**
+ * Reply
+ *
+ * The reply object
+ *
+ * @author Anthony Whittle, L02 
+ *
+ * @version 04/30/2022
+ *
+ */
+
 public class Reply implements Post, Serializable
 {
 
@@ -20,9 +31,9 @@ public class Reply implements Post, Serializable
 		this.votes = votes;
 	}
 
-	public void editMessage(String message)
+	public void editMessage(String test)
 	{
-		this.message = message;
+		this.message = test;
 	}
 
 	public void addVote()
@@ -31,12 +42,12 @@ public class Reply implements Post, Serializable
 	}
 
 	@Override
-	public String getMessage(){
+	public String getMessage() {
 		return message;
 	}
 
 	@Override
-	public User getPoster(){
+	public User getPoster() {
 		return poster;
 	}
 
