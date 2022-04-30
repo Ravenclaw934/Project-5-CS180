@@ -1,4 +1,15 @@
 
+/**
+ * User
+ *
+ * This is the user interface for the different types of users
+ *
+ * @author Anthony Whittle, L02
+ *
+ * @version 04/30/2022
+ *
+ */
+
 public interface User 
 {
 	
@@ -14,9 +25,12 @@ public interface User
 	
 	public void setPassword(String password); // Sets the password
 	
-	public Discussion editDiscussion(String message) throws PermissionDeniedException, ActionFailedException; // Edits the message of the discussion that's been posted
+	public Discussion editDiscussion(String message) 
+        throws PermissionDeniedException, ActionFailedException; 
+    // Edits the message of the discussion that's been posted
 	
-	public Reply postReply(String message, Discussion post) throws ActionFailedException; // Posts a reply to the discussion post
+	public Reply postReply(String message, Discussion post) 
+        throws ActionFailedException; // Posts a reply to the discussion post
 	
 	
 }
