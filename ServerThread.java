@@ -2,6 +2,17 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 
+/**
+ * Server Thread
+ *
+ * This is the thread for the server to allow for concurrency
+ *
+ * @author Logan Knight, L02
+ *
+ * @version 04/30/2022
+ *
+ */
+
 public class ServerThread implements Runnable {
 
     Socket socket;
@@ -817,7 +828,8 @@ public class ServerThread implements Runnable {
         }
     }
 
-    public void editReply(String course, String teacher, String discussion, String user, String oldReply, String newReply) {
+    public void editReply(String course, String teacher, 
+                          String discussion, String user, String oldReply, String newReply) {
         ArrayList<String> lines = new ArrayList<>();
         synchronized (COURSE_GATE) {
             try {
