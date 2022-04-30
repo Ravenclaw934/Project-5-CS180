@@ -1,6 +1,17 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * Student
+ *
+ * This is the student object for the program
+ *
+ * @author Anthony Whittle, L02
+ *
+ * @version 04/30/2022
+ *
+ */
+
 public class Student implements User, Serializable
 {
 
