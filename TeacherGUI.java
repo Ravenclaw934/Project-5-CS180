@@ -132,8 +132,8 @@ public class TeacherGUI extends JComponent implements Runnable {
     JFrame frame;
     Container content;
 
-    Student Anthony = new Student("ajwhittl","password");
-    Teacher Jones = new Teacher("jjones", "password");
+    Student anthony = new Student("ajwhittl", "password");
+    Teacher jones = new Teacher("jjones", "password");
     Course history = new Course("History");
 
     Socket socket;
@@ -141,11 +141,11 @@ public class TeacherGUI extends JComponent implements Runnable {
 
     public TeacherGUI() {
         students = new ArrayList<Student>();
-        students.add(Anthony);
+        students.add(anthony);
         courses = new ArrayList<Course>();
         courses.add(history);
         teachers = new ArrayList<Teacher>();
-        teachers.add(Jones);
+        teachers.add(jones);
 
         buttons.add(confirm);
         buttons.add(refresh);
@@ -394,7 +394,7 @@ public class TeacherGUI extends JComponent implements Runnable {
             public void actionPerformed(ActionEvent e) {
 
                 removeListeners();
-                DiscussionMenu();
+                discussionMenu();
 
             }
         });
@@ -509,9 +509,9 @@ public class TeacherGUI extends JComponent implements Runnable {
 
                 frame.dispose();
 
-                for(int i = 0; i < teachers.size(); i++)
+                for (int i = 0; i < teachers.size(); i++)
                 {
-                    if(teachers.get(i).getUsername().equals(username))
+                    if (teachers.get(i).getUsername().equals(username))
                     {
                         try {
                             PrintWriter writer = new PrintWriter(socket.getOutputStream());
@@ -642,9 +642,9 @@ public class TeacherGUI extends JComponent implements Runnable {
 
                 password = passText.getText();
 
-                for(int i = 0; i < teachers.size(); i++)
+                for (int i = 0; i < teachers.size(); i++)
                 {
-                    if(teachers.get(i).getPassword().equals(oldPassword))
+                    if (teachers.get(i).getPassword().equals(oldPassword))
                     {
                         teachers.get(i).setPassword(password);
 
@@ -719,7 +719,7 @@ public class TeacherGUI extends JComponent implements Runnable {
     }
 
 
-    public void createCourse(){
+    public void createCourse() {
         frame.dispose();
 
         frame = new JFrame("Create Course");
@@ -772,7 +772,7 @@ public class TeacherGUI extends JComponent implements Runnable {
 
     }
 
-    public void DiscussionMenu(){
+    public void discussionMenu() {
 
         frame.dispose();
 
@@ -830,7 +830,7 @@ public class TeacherGUI extends JComponent implements Runnable {
         String[] names = new String[students.size()];
 
 
-        for(int i = 0; i < students.size(); i++)
+        for (int i = 0; i < students.size(); i++)
         {
             names[i] = students.get(i).getUsername();
 
@@ -845,9 +845,9 @@ public class TeacherGUI extends JComponent implements Runnable {
             public void actionPerformed(ActionEvent e) {
 
 
-                for(int i = 0; i < students.size(); i++)
+                for (int i = 0; i < students.size(); i++)
                 {
-                    if(students.get(i).getUsername().equals(studentDropdown.getSelectedItem()))
+                    if (students.get(i).getUsername().equals(studentDropdown.getSelectedItem()))
                     {
                         removeListeners();
                         gradeStudent(students.get(i));
@@ -891,9 +891,9 @@ public class TeacherGUI extends JComponent implements Runnable {
             public void actionPerformed(ActionEvent e) {
 
 
-                for(int i = 0; i < students.size(); i++)
+                for (int i = 0; i < students.size(); i++)
                 {
-                    if(students.get(i).equals(user))
+                    if (students.get(i).equals(user))
                     {
                         students.get(i).setGrade(Integer.parseInt(grades.getItemAt(grades.getSelectedIndex())));
 
@@ -931,7 +931,7 @@ public class TeacherGUI extends JComponent implements Runnable {
 
 
 
-    public void createDiscussion(){
+    public void createDiscussion() {
 
         frame.dispose();
 
@@ -942,7 +942,7 @@ public class TeacherGUI extends JComponent implements Runnable {
 
         String[] names = new String[courses.size()];
 
-        for(int i = 0; i < courses.size(); i++)
+        for (int i = 0; i < courses.size(); i++)
         {
             names[i] = courses.get(i).getCourseName();
         }
@@ -995,9 +995,9 @@ public class TeacherGUI extends JComponent implements Runnable {
 
                 String message = passText.getText();
 
-                for(int i = 0; i < courses.size(); i++)
+                for  (int i = 0; i < courses.size(); i++)
                 {
-                    if(courses.get(i).getCourseName().equals(course))
+                    if (courses.get(i).getCourseName().equals(course))
                     {
                         courses.get(i).forum.add(new Discussion(message));
 
@@ -1030,7 +1030,7 @@ public class TeacherGUI extends JComponent implements Runnable {
         frame.setVisible(true);
     }
 
-    public void editDiscussionMenu(){
+    public void editDiscussionMenu() {
 
         frame.dispose();
 
@@ -1041,7 +1041,7 @@ public class TeacherGUI extends JComponent implements Runnable {
 
         String[] names = new String[courses.size()];
 
-        for(int i = 0; i < courses.size(); i++)
+        for (int i = 0; i < courses.size(); i++)
         {
             names[i] = courses.get(i).getCourseName();
         }
@@ -1085,9 +1085,9 @@ public class TeacherGUI extends JComponent implements Runnable {
 
         Course place = null;
 
-        for(int i = 0; i < courses.size(); i++)
+        for (int i = 0; i < courses.size(); i++)
         {
-            if(courses.get(i).getCourseName().equals(course))
+            if (courses.get(i).getCourseName().equals(course))
             {
                 place = courses.get(i);
             }
@@ -1095,7 +1095,7 @@ public class TeacherGUI extends JComponent implements Runnable {
 
         String[] names = new String[place.getForum().size()];
 
-        for(int i = 0; i < place.getForum().size(); i++)
+        for (int i = 0; i < place.getForum().size(); i++)
         {
             names[i] = place.getForum().get(i).getMessage();
         }
@@ -1150,13 +1150,13 @@ public class TeacherGUI extends JComponent implements Runnable {
 
                 String message = passText.getText();
 
-                for(int i = 0; i < courses.size(); i++)
+                for (int i = 0; i < courses.size(); i++)
                 {
-                    if(courses.get(i).getCourseName().equals(course))
+                    if (courses.get(i).getCourseName().equals(course))
                     {
-                        for(int j = 0; j < courses.get(i).getForum().size(); j++)
+                        for (int j = 0; j < courses.get(i).getForum().size(); j++)
                         {
-                            if(courses.get(i).getForum().get(j).getMessage().equals(discussion))
+                            if (courses.get(i).getForum().get(j).getMessage().equals(discussion))
                             {
                                 try {
                                     PrintWriter writer = new PrintWriter(socket.getOutputStream());
@@ -1193,7 +1193,7 @@ public class TeacherGUI extends JComponent implements Runnable {
 
     }
 
-    public void deleteDiscussionMenu(){
+    public void deleteDiscussionMenu() {
 
         frame.dispose();
 
@@ -1332,7 +1332,7 @@ public class TeacherGUI extends JComponent implements Runnable {
 
         String[] names = new String[courses.size()];
 
-        for(int i = 0; i < courses.size(); i++)
+        for (int i = 0; i < courses.size(); i++)
         {
             names[i] = courses.get(i).getCourseName();
         }
@@ -1376,9 +1376,9 @@ public class TeacherGUI extends JComponent implements Runnable {
 
         Course discussions = null;
 
-        for(int i = 0; i < courses.size(); i++)
+        for (int i = 0; i < courses.size(); i++)
         {
-            if(courses.get(i).getCourseName().equals(course))
+            if (courses.get(i).getCourseName().equals(course))
             {
                 discussions = courses.get(i);
             }
@@ -1386,12 +1386,12 @@ public class TeacherGUI extends JComponent implements Runnable {
 
         final Course discussion = discussions;
 
-        if(discussions != null)
+        if (discussions != null)
         {
 
             String[] list = new String[discussions.getForum().size()];
 
-            for(int i = 0; i < list.length; i++)
+            for (int i = 0; i < list.length; i++)
             {
                 list[i] = discussions.getForum().get(i).getMessage();
             }
@@ -1496,7 +1496,7 @@ public class TeacherGUI extends JComponent implements Runnable {
 
         String[] names = new String[courses.size()];
 
-        for(int i = 0; i < courses.size(); i++)
+        for (int i = 0; i < courses.size(); i++)
         {
             names[i] = courses.get(i).getCourseName();
         }
@@ -1538,9 +1538,9 @@ public class TeacherGUI extends JComponent implements Runnable {
 
         Course discussions = null;
 
-        for(int i = 0; i < courses.size(); i++)
+        for (int i = 0; i < courses.size(); i++)
         {
-            if(courses.get(i).getCourseName().equals(course))
+            if (courses.get(i).getCourseName().equals(course))
             {
                 discussions = courses.get(i);
             }
@@ -1548,12 +1548,12 @@ public class TeacherGUI extends JComponent implements Runnable {
 
         final Course discussion = discussions;
 
-        if(discussions != null)
+        if (discussions != null)
         {
 
             String[] list = new String[discussions.getForum().size()];
 
-            for(int i = 0; i < list.length; i++)
+            for (int i = 0; i < list.length; i++)
             {
                 list[i] = discussions.getForum().get(i).getMessage();
             }
@@ -1594,7 +1594,7 @@ public class TeacherGUI extends JComponent implements Runnable {
         JPanel center = new JPanel();
 
 
-        if(discussion.getForum().get(discussion.getForum().indexOf(forum)).getReplyArray().size() <= 0)
+        if (discussion.getForum().get(discussion.getForum().indexOf(forum)).getReplyArray().size() <= 0)
         {
             JOptionPane.showInternalMessageDialog(null, "Discussion has no replies", "Action Failed",
                     JOptionPane.ERROR_MESSAGE);
@@ -1602,9 +1602,11 @@ public class TeacherGUI extends JComponent implements Runnable {
         {
             Reply reply = discussion.getForum().get(discussion.getForum().indexOf(forum)).getReplyArray().get(0);
 
-            for(int i = 0; i < discussion.getForum().get(discussion.getForum().indexOf(forum)).getReplyArray().size(); i++)
+            for (int i = 0; i < discussion.getForum().get(discussion.getForum().indexOf
+                                                          (forum)).getReplyArray().size(); i++)
             {
-                if(reply.getVotes() < discussion.getForum().get(discussion.getForum().indexOf(forum)).getReplyArray().get(i).getVotes())
+                if (reply.getVotes() < discussion.getForum().get(discussion.getForum().indexOf
+                                                                 (forum)).getReplyArray().get(i).getVotes())
                 {
                     reply = discussion.getForum().get(discussion.getForum().indexOf(forum)).getReplyArray().get(i);
                 }
@@ -1646,7 +1648,7 @@ public class TeacherGUI extends JComponent implements Runnable {
 
         String[] names = new String[courses.size()];
 
-        for(int i = 0; i < courses.size(); i++)
+        for (int i = 0; i < courses.size(); i++)
         {
             names[i] = courses.get(i).getCourseName();
         }
@@ -1713,16 +1715,16 @@ public class TeacherGUI extends JComponent implements Runnable {
 
     public void removeListeners()
     {
-        for(int i = 0; i < buttons.size(); i++)
+        for (int i = 0; i < buttons.size(); i++)
         {
             try {
-                if(buttons.get(i).getActionListeners().length > 0)
+                if (buttons.get(i).getActionListeners().length > 0)
                 {
                     buttons.get(i).removeActionListener(buttons.get(i).getActionListeners()[0]);
                 }
             } catch (NullPointerException e)
             {
-
+                System.out.println();
             }
         }
     }
