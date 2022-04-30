@@ -150,7 +150,8 @@ public class StudentGUI extends JComponent implements Runnable {
         }
     };
 
-    public StudentGUI(Student student, ArrayList<Student> students, ArrayList<Teacher> teachers, ArrayList<Course> courses) {
+    public StudentGUI(Student student, ArrayList<Student> students,
+                      ArrayList<Teacher> teachers, ArrayList<Course> courses) {
         this.student = student;
         this.students = students;
         this.teachers = teachers;
@@ -298,7 +299,9 @@ public class StudentGUI extends JComponent implements Runnable {
     }
 
     public void fileSelect(Discussion current) {
-        String filename = JOptionPane.showInputDialog(null, "Please enter the filename", "University Card", JOptionPane.QUESTION_MESSAGE);
+        String filename = JOptionPane.showInputDialog(null,
+                                                      "Please enter the filename", "University Card",
+                                                      JOptionPane.QUESTION_MESSAGE);
         String fRep = "";
         try {
             File f = new File(filename);
@@ -517,9 +520,9 @@ public class StudentGUI extends JComponent implements Runnable {
 
                 frame.dispose();
 
-                for(int i = 0; i < students.size(); i++)
+                for (int i = 0; i < students.size(); i++)
                 {
-                    if(students.get(i).getUsername().equals(username))
+                    if (students.get(i).getUsername().equals(username))
                     {
                         try {
                             PrintWriter writer = new PrintWriter(socket.getOutputStream());
@@ -583,7 +586,7 @@ public class StudentGUI extends JComponent implements Runnable {
 
                 try {
                     for (Student s : students) {
-                        if (s.getUsername().equals(userText.getText())) {
+                        if  (s.getUsername().equals(userText.getText())) {
                             throw new AccountExistsException("");
                         }
                     }
@@ -650,9 +653,9 @@ public class StudentGUI extends JComponent implements Runnable {
 
                 password = passText.getText();
 
-                for(int i = 0; i < students.size(); i++)
+                for (int i = 0; i < students.size(); i++)
                 {
-                    if(students.get(i).getUsername().equals(student.getUsername()))
+                    if (students.get(i).getUsername().equals(student.getUsername()))
                     {
                         students.get(i).setPassword(password);
 
@@ -718,7 +721,7 @@ public class StudentGUI extends JComponent implements Runnable {
         try {
             discChoice.add(discDropdown);
             discChoice.add(viewReplyButton);
-            content.add(discChoice,BorderLayout.CENTER);
+            content.add(discChoice, BorderLayout.CENTER);
         } catch (Exception e) {
             System.out.println("Null");
             e.printStackTrace();
