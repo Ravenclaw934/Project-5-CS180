@@ -3,6 +3,17 @@ import java.util.ArrayList;
 // FOR FORMATTED TXT FILE: username,password,grade(default 0)
 //                         username,password,grade
 
+/**
+ * Student Import
+ *
+ * Imports the students into the program
+ *
+ * @author Logan Knight, L02
+ *
+ * @version 04/30/2022
+ *
+ */
+
 public class StudentImport {
 
     private String filename;
@@ -39,15 +50,16 @@ public class StudentImport {
         this.filename = filename;
     }
 
-    public void finalizeStudents(ArrayList<Student> students) {
+    public void finalizeStudents(ArrayList<Student> studentsList) {
         try {
             File f = new File(filename);
             f.delete();
             FileOutputStream fos = new FileOutputStream(f, false);
             PrintWriter pw = new PrintWriter(fos);
 
-            for (int i = 0; i < students.size(); i++) {
-                pw.println(students.get(i).getUsername() + "," + students.get(i).getPassword() + "," + students.get(i).getGrade());
+            for (int i = 0; i < studentsList.size(); i++) {
+                pw.println(studentsList.get(i).getUsername() + "," + studentsList.get(i).getPassword() 
+                           + "," + studentsList.get(i).getGrade());
                 pw.flush();
             }
             pw.close();
