@@ -1,5 +1,16 @@
 import java.io.Serializable;
 
+/**
+ * Teacher
+ *
+ * Teacher object for the program
+ *
+ * @author Anthony Whittle, L02 
+ *
+ * @version 04/30/2022
+ *
+ */
+
 public class Teacher implements User, Serializable {
 
 	String username;
