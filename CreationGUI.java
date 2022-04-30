@@ -9,6 +9,17 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
+/**
+ * Creation GUI
+ *
+ * The opeing gui to log in and create accounts
+ *
+ * @author Logan Knight, L02
+ *
+ * @version 04/30/2022
+ *
+ */
+
 public class CreationGUI extends JComponent implements Runnable {
 
     public ArrayList<Student> students;
@@ -70,7 +81,7 @@ public class CreationGUI extends JComponent implements Runnable {
                 if (usernameExists) {
                     JOptionPane.showMessageDialog(null, "This username already exists",
                             "Creation Error", JOptionPane.ERROR_MESSAGE);
-                } else{
+                } else {
                     if (userType.equals("T")) {
                         Teacher newTeacher = new Teacher(userText.getText(), passText.getText());
                         teachers.add(newTeacher);
