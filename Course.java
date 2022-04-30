@@ -1,6 +1,17 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * Course
+ *
+ * The course object class
+ *
+ * @author Anthony Whittle, L02 
+ *
+ * @version 04/30/2022
+ *
+ */
+
 public class Course implements Serializable
 {
 
@@ -39,12 +50,13 @@ public class Course implements Serializable
 		return name;
 	}
 
-	public void deletePost(User user, Post post) throws PermissionDeniedException, ActionFailedException // Deletes the post from the forum
+	public void deletePost(User user, Post post) 
+    throws PermissionDeniedException, ActionFailedException // Deletes the post from the forum
 	{
-		if(user.getClass() != Teacher.class)
+		if (user.getClass() != Teacher.class)
 		{
 			throw new PermissionDeniedException("You do not have permission to delete posts");
-		} else if(forum.contains(post))
+		} else if (forum.contains(post))
 		{
 			forum.remove(forum.indexOf(post));
 		} else
@@ -52,15 +64,16 @@ public class Course implements Serializable
 			throw new ActionFailedException("Action failed because post does not exist");
 		}
 
-		if(forum.contains(post) == true)
+		if (forum.contains(post) == true)
 		{
 			throw new ActionFailedException("Deletion failed");
 		}
 	}
 
-	public void editDiscussion(User user, Discussion post, String message) throws PermissionDeniedException, ActionFailedException, InvalidUserException // Edits the discussion to read a new message
+	public void editDiscussion(User user, Discussion post, String message) throws
+    PermissionDeniedException, ActionFailedException, InvalidUserException // Edits the discussion to read a new message
 	{
-		if(user.getClass() != Teacher.class)
+		if (user.getClass() != Teacher.class)
 		{
 			throw new PermissionDeniedException("You're a student");
 		} else
@@ -75,7 +88,7 @@ public class Course implements Serializable
 		return forum;
 	}
 
-	public void setForum (ArrayList<Discussion> forum)
+	public void setForum(ArrayList<Discussion> forum)
 	{
 		this.forum = forum;
 	}
