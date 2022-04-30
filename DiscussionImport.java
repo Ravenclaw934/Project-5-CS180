@@ -9,6 +9,17 @@ import java.util.Objects;
 //                         course,Teacher(username),discussion
 //                         Student(username),reply
 
+/**
+ * Discussion Import
+ *
+ * This imports the discussions into the interface at the start
+ *
+ * @author Logan Knight, L02 
+ *
+ * @version 04/30/2022
+ *
+ */
+
 public class DiscussionImport {
 
     private String filename;
@@ -114,10 +125,11 @@ public class DiscussionImport {
                     for (int j = 0; j < currentdisc.getReplies(); j++)
                     {
                         current = (currentdisc.getReplyArray().get(j).getPoster());
-                        if(current instanceof Teacher) {
+                        if (current instanceof Teacher) {
                             pw.println(((Teacher) current).getUsername() + "," + (currentdisc.getMessage()));
                         } else {
-                            pw.println(((Student) current).getUsername() + "," + (currentdisc.getReplyArray().get(j).getMessage()));
+                            pw.println(((Student) current).getUsername() + "," + 
+                                       (currentdisc.getReplyArray().get(j).getMessage()));
 
                         }
                     }
