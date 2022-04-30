@@ -4,6 +4,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+/**
+ * Login GUI
+ *
+ * This is the login screen for the client
+ *
+ * @author Logan Knight, L02
+ *
+ * @version 04/30/2022
+ *
+ */
+
 public class LoginGUI extends JComponent implements Runnable {
 
     public ArrayList<Student> students;
