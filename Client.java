@@ -7,6 +7,17 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+/**
+ * Client
+ *
+ * The client program in order for the user to enter the program
+ *
+ * @author Anthony Whittle, L02
+ *
+ * @version 04/30/2022
+ *
+ */
+
 public class Client {
 
     public static void main(String[] args) {
@@ -49,7 +60,7 @@ public class Client {
                 TeacherGUI teacherGUI = new TeacherGUI(students, teachers, courses, socket, ois);
                 Thread t = new Thread(teacherGUI);
                 t.start();
-            } else if (acctType.equals("Create Teacher Account")){
+            } else if (acctType.equals("Create Teacher Account")) {
                 CreationGUI creationGUI = new CreationGUI(students, teachers, courses, "T", socket, ois);
                 Thread t = new Thread(creationGUI);
                 t.start();
