@@ -1,6 +1,17 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * Discussion
+ *
+ * This is the discussion object
+ *
+ * @author Anthony Whittle, L02 
+ *
+ * @version 04/30/2022
+ *
+ */
+
 public class Discussion implements Post, Serializable {
 
 	String message;
